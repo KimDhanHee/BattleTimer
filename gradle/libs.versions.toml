@@ -7,6 +7,7 @@ androidx-lifecycle = "2.5.1"
 compose-compiler = "1.3.2"
 compose-activity = "1.5.1"
 compose-viewmodel = "2.5.1"
+compose-navigation = "2.5.3"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -25,6 +26,7 @@ compose-icons-core = { module = "androidx.compose.material:material-icons-core" 
 compose-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
 compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "compose-viewmodel"}
+compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
 
 [bundles]
 compose = [ "compose-material3", "compose-preview", "compose-icons-core", "compose-icons-extended" ]
