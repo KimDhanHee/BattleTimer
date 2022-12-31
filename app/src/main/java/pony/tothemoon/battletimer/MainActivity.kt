@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import pony.tothemoon.battletimer.ui.components.TimerListScreen
 import pony.tothemoon.battletimer.ui.theme.BattleTimerTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,22 +20,19 @@ class MainActivity : ComponentActivity() {
       BattleTimerTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          Greeting("Android")
+          TimerListScreen()
         }
       }
     }
   }
 }
 
-@Composable
-fun Greeting(name: String) {
-  Text(text = "Hello $name!")
-}
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
   BattleTimerTheme {
-    Greeting("Android")
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+      TimerListScreen()
+    }
   }
 }
