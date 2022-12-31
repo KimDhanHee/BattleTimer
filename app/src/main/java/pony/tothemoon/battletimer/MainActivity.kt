@@ -6,10 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import pony.tothemoon.battletimer.ui.components.TimerDestination
 import pony.tothemoon.battletimer.ui.components.TimerListScreen
 import pony.tothemoon.battletimer.ui.theme.BattleTimerTheme
 
@@ -17,9 +20,19 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      BattleTimerTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+      TimerApp()
+    }
+  }
+}
+
+@Composable
+fun TimerApp() {
+  BattleTimerTheme {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+      val navController = rememberNavController()
+
+      NavHost(navController, startDestination = TimerDestination.TimerList.route) {
+        composable(route = TimerDestination.TimerList.route) {
           TimerListScreen()
         }
       }
@@ -31,8 +44,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
   BattleTimerTheme {
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-      TimerListScreen()
-    }
+    TimerApp()
   }
 }
