@@ -5,6 +5,7 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,9 +33,9 @@ import pony.tothemoon.battletimer.ui.theme.White900
 import pony.tothemoon.battletimer.viewmodel.TimerListViewModel
 
 @Composable
-fun TimerListScreen(viewmodel: TimerListViewModel = viewModel()) {
+fun TimerListScreen(onTimerItemClick: (TimerInfo) -> Unit = {}, viewmodel: TimerListViewModel = viewModel()) {
   val timerList by viewmodel.timerListFlow.collectAsState()
-  TimerList(modifier = Modifier.padding(20.dp), viewmodel.battleTimer, timerList)
+  TimerList(modifier = Modifier.padding(20.dp), viewmodel.battleTimer, timerList, onTimerItemClick)
 }
 
 @Composable
@@ -42,6 +43,7 @@ fun TimerList(
   modifier: Modifier = Modifier,
   battleTimer: TimerInfo,
   timerList: List<TimerInfo> = emptyList(),
+  onTimerItemClick: (TimerInfo) -> Unit = {}
 ) {
   LazyColumn(
     modifier = modifier,
@@ -52,7 +54,7 @@ fun TimerList(
     }
 
     items(timerList) { timerInfo ->
-      TimerListItem(timerInfo)
+      TimerListItem(timerInfo, onClick = onTimerItemClick)
     }
   }
 }
@@ -87,10 +89,15 @@ fun BattleTimerPreview() {
 }
 
 @Composable
-private fun TimerListItem(timerInfo: TimerInfo, modifier: Modifier = Modifier) {
+private fun TimerListItem(
+  timerInfo: TimerInfo,
+  modifier: Modifier = Modifier,
+  onClick: (TimerInfo) -> Unit = {},
+) {
   Card(
     modifier = modifier
-      .fillMaxWidth(),
+      .fillMaxWidth()
+      .clickable { onClick(timerInfo) },
     shape = RoundedCornerShape(12.dp),
   ) {
     TimerListItemContent(timerInfo)
