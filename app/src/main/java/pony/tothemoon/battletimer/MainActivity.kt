@@ -9,11 +9,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.ui.components.TimerDestination
 import pony.tothemoon.battletimer.ui.components.TimerListScreen
+import pony.tothemoon.battletimer.ui.components.TimerScreen
 import pony.tothemoon.battletimer.ui.theme.BattleTimerTheme
 
 class MainActivity : ComponentActivity() {
@@ -33,7 +39,18 @@ fun TimerApp() {
 
       NavHost(navController, startDestination = TimerDestination.TimerList.route) {
         composable(route = TimerDestination.TimerList.route) {
-          TimerListScreen()
+          TimerListScreen(onTimerItemClick = { timerInfo ->
+            navController.navigateToSingleTop("${TimerDestination.Timer.route}/$timerInfo")
+          })
+        }
+        composable(
+          route = TimerDestination.Timer.routeWithArgs,
+          arguments = TimerDestination.Timer.arguments
+        ) { navBackStackEntry ->
+          navBackStackEntry.arguments?.getString(TimerDestination.Timer.timerInfoArg)?.let {
+            val timerInfo: TimerInfo = Json.decodeFromString(it)
+            TimerScreen(timerInfo)
+          }
         }
       }
     }
@@ -47,3 +64,14 @@ fun DefaultPreview() {
     TimerApp()
   }
 }
+
+fun NavHostController.navigateToSingleTop(route: String) =
+  this.navigate(route) {
+    popUpTo(
+      this@navigateToSingleTop.graph.findStartDestination().id
+    ) {
+      saveState = true
+    }
+    launchSingleTop = true
+    restoreState = true
+  }
