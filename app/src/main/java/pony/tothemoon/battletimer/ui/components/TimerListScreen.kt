@@ -30,12 +30,22 @@ import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.ui.theme.BattleTimerTheme
 import pony.tothemoon.battletimer.ui.theme.Red900
 import pony.tothemoon.battletimer.ui.theme.White900
+import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.TimerListViewModel
 
 @Composable
-fun TimerListScreen(onTimerItemClick: (TimerInfo) -> Unit = {}, viewmodel: TimerListViewModel = viewModel()) {
-  val timerList by viewmodel.timerListFlow.collectAsState()
-  TimerList(modifier = Modifier.padding(20.dp), viewmodel.battleTimer, timerList, onTimerItemClick)
+fun TimerListScreen(
+  onTimerItemClick: (TimerInfo) -> Unit = {},
+  timerListViewModel: TimerListViewModel = viewModel(),
+  battleTimerViewModel: BattleTimerViewModel = viewModel(),
+) {
+  val timerList by timerListViewModel.timerListFlow.collectAsState()
+  TimerList(
+    modifier = Modifier.padding(20.dp),
+    battleTimerViewModel.battleTimer,
+    timerList,
+    onTimerItemClick
+  )
 }
 
 @Composable
@@ -43,7 +53,7 @@ fun TimerList(
   modifier: Modifier = Modifier,
   battleTimer: TimerInfo,
   timerList: List<TimerInfo> = emptyList(),
-  onTimerItemClick: (TimerInfo) -> Unit = {}
+  onTimerItemClick: (TimerInfo) -> Unit = {},
 ) {
   LazyColumn(
     modifier = modifier,
