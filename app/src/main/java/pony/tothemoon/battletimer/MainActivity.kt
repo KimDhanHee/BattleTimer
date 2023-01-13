@@ -49,7 +49,7 @@ fun TimerApp() {
         ) { navBackStackEntry ->
           navBackStackEntry.arguments?.getString(TimerDestination.Timer.timerInfoArg)?.let {
             val timerInfo: TimerInfo = Json.decodeFromString(it)
-            TimerScreen(timerInfo)
+            TimerScreen(timerInfo, navController)
           }
         }
       }
