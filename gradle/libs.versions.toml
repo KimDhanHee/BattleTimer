@@ -1,5 +1,6 @@
 [versions]
 kotlin = "1.7.20"
+kotlinx-serialization = "1.4.1"
 androidGradle = "7.3.1"
 androidx-core = "1.9.0"
 androidx-lifecycle = "2.5.1"
@@ -11,6 +12,7 @@ compose-navigation = "2.5.3"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
 
@@ -27,6 +29,7 @@ compose-icons-extended = { module = "androidx.compose.material:material-icons-ex
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
 compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "compose-viewmodel"}
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
 
 [bundles]
 compose = [ "compose-material3", "compose-preview", "compose-icons-core", "compose-icons-extended" ]
