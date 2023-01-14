@@ -137,7 +137,7 @@ private fun Body(
         .padding(horizontal = 20.dp)
     )
 
-    if (timerUiState is TimerUiState.Running) {
+    if (timerUiState.displayBattle) {
       val battleTime by remember { mutableStateOf(battleTimer.time) }
       Timer(
         title = "Battle Timer",
@@ -175,7 +175,7 @@ private fun Footer(
         }
         Spacer(modifier = Modifier.size(20.dp))
         OutlinedButton(onClick = onFinish) {
-          Text(text = "종료하기)")
+          Text(text = "종료하기")
         }
       }
     }

@@ -55,6 +55,9 @@ sealed class TimerUiState {
   data class Finish(override val time: Long) : TimerUiState()
 
   abstract val time: Long
+
+  val displayBattle: Boolean
+    get() = this is Running || this is Finish
 }
 
 class TimerViewModelFactory(
