@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,19 +31,24 @@ import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.ui.theme.BattleTimerTheme
 import pony.tothemoon.battletimer.ui.theme.Red900
 import pony.tothemoon.battletimer.ui.theme.White900
-import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.TimerListViewModel
 
 @Composable
 fun TimerListScreen(
+  isCancel: Boolean = false,
   onTimerItemClick: (TimerInfo) -> Unit = {},
   timerListViewModel: TimerListViewModel = viewModel(),
-  battleTimerViewModel: BattleTimerViewModel = viewModel(),
 ) {
+  LaunchedEffect(Unit) {
+    if (isCancel) {
+      timerListViewModel.refreshBattleTimer()
+    }
+  }
+
   val timerList by timerListViewModel.timerListFlow.collectAsState()
   TimerList(
     modifier = Modifier.padding(20.dp),
-    battleTimerViewModel.battleTimer,
+    timerListViewModel.battleTimer,
     timerList,
     onTimerItemClick
   )
