@@ -40,7 +40,7 @@ fun TimerListScreen(
   timerListViewModel: TimerListViewModel = viewModel(),
 ) {
   LaunchedEffect(Unit) {
-    if (isCancel) {
+    if (!isCancel) {
       timerListViewModel.refreshBattleTimer()
     }
   }
