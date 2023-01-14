@@ -16,7 +16,7 @@ class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
 
   private suspend fun startBattle() {
     while (timerUiState.time > 0) {
-      delay(1000)
+      delay(TimerInfo.SECONDS_UNIT)
 
       timerUiState = TimerUiState.Running(timerUiState.time - TimerInfo.SECONDS_UNIT)
 
