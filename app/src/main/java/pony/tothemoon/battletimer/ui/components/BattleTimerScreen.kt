@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,9 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIos
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -40,9 +36,9 @@ import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.ui.theme.White900
-import pony.tothemoon.battletimer.viewmodel.TimerUiState
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModelFactory
+import pony.tothemoon.battletimer.viewmodel.TimerUiState
 
 @Composable
 fun BattleTimerScreen(
@@ -105,33 +101,6 @@ private fun victory(navController: NavHostController) {
     ?.savedStateHandle
     ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)
   navController.navigateUp()
-}
-
-@Composable
-private fun Header(text: String, onClickBack: () -> Unit) {
-  Row(modifier = Modifier
-    .fillMaxWidth()
-    .padding(all = 16.dp),
-    verticalAlignment = Alignment.CenterVertically
-  ) {
-    Icon(
-      imageVector = Icons.Filled.ArrowBackIos,
-      contentDescription = null,
-      modifier = Modifier
-        .size(48.dp)
-        .padding(8.dp)
-        .clickable { onClickBack() },
-      tint = Color.White
-    )
-    Text(
-      text = text,
-      modifier = Modifier.weight(1f),
-      color = Color.White,
-      textAlign = TextAlign.Center,
-      style = MaterialTheme.typography.titleLarge
-    )
-    Spacer(modifier = Modifier.size(48.dp))
-  }
 }
 
 @Composable
