@@ -52,7 +52,10 @@ class MainActivity : ComponentActivity() {
               .collectAsState()
             TimerListScreen(
               isCancel = isCancel,
-              onTimerItemClick = { timerInfo ->
+              onClickTimer = { timerInfo ->
+                navController.navigateToSingleTop("${TimerDestination.MyTimer.route}/$timerInfo")
+              },
+              onClickBattle = { timerInfo ->
                 navController.navigateToSingleTop("${TimerDestination.BattleTimer.route}/$timerInfo")
               }
             )

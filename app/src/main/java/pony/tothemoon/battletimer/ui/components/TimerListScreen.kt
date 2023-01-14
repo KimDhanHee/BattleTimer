@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,14 +19,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,7 +43,8 @@ import pony.tothemoon.battletimer.viewmodel.TimerListViewModel
 @Composable
 fun TimerListScreen(
   isCancel: Boolean = false,
-  onTimerItemClick: (TimerInfo) -> Unit = {},
+  onClickTimer: (TimerInfo) -> Unit = {},
+  onClickBattle: (TimerInfo) -> Unit = {},
   timerListViewModel: TimerListViewModel = viewModel(),
 ) {
   LaunchedEffect(isCancel) {
@@ -59,7 +64,8 @@ fun TimerListScreen(
     TimerList(
       battleTimer = timerListViewModel.battleTimer,
       timerList = timerList,
-      onTimerItemClick = onTimerItemClick
+      onClickTimer = onClickTimer,
+      onClickBattle = onClickBattle,
     )
   }
 }
@@ -78,7 +84,8 @@ private fun TimerList(
   battleTimer: TimerInfo,
   modifier: Modifier = Modifier,
   timerList: List<TimerInfo> = emptyList(),
-  onTimerItemClick: (TimerInfo) -> Unit = {},
+  onClickTimer: (TimerInfo) -> Unit = {},
+  onClickBattle: (TimerInfo) -> Unit = {},
 ) {
   LazyColumn(
     modifier = modifier,
@@ -89,7 +96,11 @@ private fun TimerList(
     }
 
     items(timerList) { timerInfo ->
-      TimerListItem(timerInfo, onClick = onTimerItemClick)
+      TimerListItem(
+        timerInfo,
+        onClickTimer = onClickTimer,
+        onClickBattle = onClickBattle
+      )
     }
   }
 }
@@ -111,7 +122,7 @@ private fun BattleTimer(timerInfo: TimerInfo, modifier: Modifier = Modifier) {
     shape = RoundedCornerShape(12.dp),
     colors = CardDefaults.cardColors(containerColor = colorAnim)
   ) {
-    TimerListItemContent(timerInfo)
+    TimerListItemContent(timerInfo, modifier.padding(20.dp))
   }
 }
 
@@ -119,24 +130,46 @@ private fun BattleTimer(timerInfo: TimerInfo, modifier: Modifier = Modifier) {
 private fun TimerListItem(
   timerInfo: TimerInfo,
   modifier: Modifier = Modifier,
-  onClick: (TimerInfo) -> Unit = {},
+  onClickBattle: (TimerInfo) -> Unit = {},
+  onClickTimer: (TimerInfo) -> Unit = {},
 ) {
   Card(
     modifier = modifier
-      .fillMaxWidth()
-      .clickable { onClick(timerInfo) },
+      .fillMaxWidth(),
     shape = RoundedCornerShape(12.dp),
     colors = CardDefaults.cardColors(containerColor = Gray100)
   ) {
-    TimerListItemContent(timerInfo)
+    Row(modifier = Modifier
+      .fillMaxWidth()
+      .padding(20.dp),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      TimerListItemContent(timerInfo, modifier = Modifier.weight(1f))
+
+      Icon(
+        painter = painterResource(id = R.drawable.ic_timer_32_32),
+        contentDescription = null,
+        modifier = Modifier
+          .padding(8.dp)
+          .clickable { onClickTimer(timerInfo) },
+        tint = Color.White
+      )
+      Spacer(modifier = Modifier.size(8.dp))
+      Icon(
+        painter = painterResource(id = R.drawable.ic_swords_32),
+        contentDescription = null,
+        modifier = Modifier
+          .padding(8.dp)
+          .clickable { onClickBattle(timerInfo) },
+        tint = Color.White
+      )
+    }
   }
 }
 
 @Composable
 private fun TimerListItemContent(timerInfo: TimerInfo, modifier: Modifier = Modifier) {
-  Column(
-    modifier = modifier.padding(20.dp)
-  ) {
+  Column(modifier = modifier) {
     Text(
       text = timerInfo.title,
       color = Color.White,
