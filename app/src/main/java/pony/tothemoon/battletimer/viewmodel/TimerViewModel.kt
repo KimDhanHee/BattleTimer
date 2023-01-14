@@ -22,6 +22,8 @@ class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
 
       battleTimer = battleTimer.copy(time = battleTimer.time - TimerInfo.SECONDS_UNIT)
     }
+
+    timerUiState = TimerUiState.Finish(timerUiState.time)
   }
 
   var timerUiState: TimerUiState by mutableStateOf(TimerUiState.Idle(timerInfo.time))
@@ -35,8 +37,8 @@ class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
         delay(2000)
 
         repeat(3) {
+          delay(TimerInfo.SECONDS_UNIT)
           timerUiState = TimerUiState.Ready(timerUiState.time, 3 - it)
-          delay(1000)
         }
 
         startBattle()
