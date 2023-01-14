@@ -49,17 +49,13 @@ fun TimerScreen(
   Box(modifier = Modifier.fillMaxSize()) {
     val timerUiState = timerViewModel.timerUiState
 
-    BackHandler {
-      back(navController, timerUiState)
-    }
+    BackHandler { back(navController, timerUiState) }
 
     Column(
       modifier = Modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      Header(text = timerInfo.title, onClickBack = {
-        back(navController, timerUiState)
-      })
+      Header(text = timerInfo.title, onClickBack = { back(navController, timerUiState) })
       Body(
         myTimer = timerInfo,
         battleTimer = timerViewModel.battleTimer,
@@ -68,9 +64,7 @@ fun TimerScreen(
       )
       Footer(
         timerUiState,
-        onClickStart = {
-          timerViewModel.start()
-        },
+        onClickStart = { timerViewModel.start() },
         onCancel = { giveUp(navController) },
         onFinish = { navController.navigateUp() },
         modifier = Modifier.padding(vertical = 20.dp)
@@ -89,8 +83,8 @@ fun TimerScreen(
 
 private fun back(navController: NavHostController, timerUiState: TimerUiState) {
   when (timerUiState) {
-    is TimerUiState.Idle -> giveUp(navController)
-    else -> navController.navigateUp()
+    is TimerUiState.Finish -> navController.navigateUp()
+    else -> giveUp(navController)
   }
 }
 
