@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -38,10 +40,18 @@ fun TimerApp() {
       val navController = rememberNavController()
 
       NavHost(navController, startDestination = TimerDestination.TimerList.route) {
-        composable(route = TimerDestination.TimerList.route) {
-          TimerListScreen(onTimerItemClick = { timerInfo ->
-            navController.navigateToSingleTop("${TimerDestination.Timer.route}/$timerInfo")
-          })
+        composable(
+          route = TimerDestination.TimerList.route,
+        ) { navBackStackEntry ->
+          val isCancel by navBackStackEntry.savedStateHandle
+            .getStateFlow(TimerDestination.TimerList.KEY_IS_CANCEL, false)
+            .collectAsState()
+          TimerListScreen(
+            isCancel = isCancel,
+            onTimerItemClick = { timerInfo ->
+              navController.navigateToSingleTop("${TimerDestination.Timer.route}/$timerInfo")
+            }
+          )
         }
         composable(
           route = TimerDestination.Timer.routeWithArgs,

@@ -11,6 +11,8 @@ import pony.tothemoon.battletimer.model.TimerInfo
 sealed class TimerDestination {
   object TimerList : TimerDestination() {
     override val route: String = "timer_list"
+
+    const val KEY_IS_CANCEL = "is_cancel"
   }
 
   object Timer : TimerDestination() {

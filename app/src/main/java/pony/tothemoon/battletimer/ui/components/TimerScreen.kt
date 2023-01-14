@@ -1,5 +1,6 @@
 package pony.tothemoon.battletimer.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,7 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.viewmodel.TimerUiState
@@ -42,17 +43,23 @@ import pony.tothemoon.battletimer.viewmodel.TimerViewModelFactory
 @Composable
 fun TimerScreen(
   timerInfo: TimerInfo,
-  navController: NavController,
+  navController: NavHostController,
   timerViewModel: TimerViewModel = viewModel(factory = TimerViewModelFactory(timerInfo)),
 ) {
   Box(modifier = Modifier.fillMaxSize()) {
     val timerUiState = timerViewModel.timerUiState
 
+    BackHandler {
+      back(navController, timerUiState)
+    }
+
     Column(
       modifier = Modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      Header(text = timerInfo.title, onClickBack = { navController.navigateUp() })
+      Header(text = timerInfo.title, onClickBack = {
+        back(navController, timerUiState)
+      })
       Body(
         myTimer = timerInfo,
         battleTimer = timerViewModel.battleTimer,
@@ -64,12 +71,8 @@ fun TimerScreen(
         onClickStart = {
           timerViewModel.start()
         },
-        onCancel = {
-          navController.navigateUp()
-        },
-        onFinish = {
-          navController.navigateUp()
-        },
+        onCancel = { giveUp(navController) },
+        onFinish = { navController.navigateUp() },
         modifier = Modifier.padding(vertical = 20.dp)
       )
     }
@@ -82,6 +85,20 @@ fun TimerScreen(
       ReadyScreen(timerUiState.countdown)
     }
   }
+}
+
+private fun back(navController: NavHostController, timerUiState: TimerUiState) {
+  when (timerUiState) {
+    is TimerUiState.Idle -> giveUp(navController)
+    else -> navController.navigateUp()
+  }
+}
+
+private fun giveUp(navController: NavHostController) {
+  navController.previousBackStackEntry
+    ?.savedStateHandle
+    ?.set(TimerDestination.TimerList.KEY_IS_CANCEL, true)
+  navController.navigateUp()
 }
 
 @Composable
@@ -120,7 +137,7 @@ private fun Body(
         .padding(horizontal = 20.dp)
     )
 
-    if (timerUiState is TimerUiState.Running) {
+    if (timerUiState.displayBattle) {
       val battleTime by remember { mutableStateOf(battleTimer.time) }
       Timer(
         title = "Battle Timer",
@@ -158,7 +175,7 @@ private fun Footer(
         }
         Spacer(modifier = Modifier.size(20.dp))
         OutlinedButton(onClick = onFinish) {
-          Text(text = "종료하기)")
+          Text(text = "종료하기")
         }
       }
     }

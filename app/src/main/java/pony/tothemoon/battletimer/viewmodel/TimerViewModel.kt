@@ -16,12 +16,14 @@ class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
 
   private suspend fun startBattle() {
     while (timerUiState.time > 0) {
-      delay(1000)
+      delay(TimerInfo.SECONDS_UNIT)
 
       timerUiState = TimerUiState.Running(timerUiState.time - TimerInfo.SECONDS_UNIT)
 
       battleTimer = battleTimer.copy(time = battleTimer.time - TimerInfo.SECONDS_UNIT)
     }
+
+    timerUiState = TimerUiState.Finish(timerUiState.time)
   }
 
   var timerUiState: TimerUiState by mutableStateOf(TimerUiState.Idle(timerInfo.time))
@@ -35,8 +37,8 @@ class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
         delay(2000)
 
         repeat(3) {
+          delay(TimerInfo.SECONDS_UNIT)
           timerUiState = TimerUiState.Ready(timerUiState.time, 3 - it)
-          delay(1000)
         }
 
         startBattle()
@@ -53,6 +55,9 @@ sealed class TimerUiState {
   data class Finish(override val time: Long) : TimerUiState()
 
   abstract val time: Long
+
+  val displayBattle: Boolean
+    get() = this is Running || this is Finish
 }
 
 class TimerViewModelFactory(
