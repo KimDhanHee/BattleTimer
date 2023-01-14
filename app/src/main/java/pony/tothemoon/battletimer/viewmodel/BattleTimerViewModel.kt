@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.model.TimerInfo
 
-class BattleTimerViewModel(timerInfo: TimerInfo) : ViewModel() {
+class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   var battleTimer by mutableStateOf(TimerInfo(title = "익명의 코뿔소", time = timerInfo.time))
     private set
 
@@ -32,7 +32,8 @@ class BattleTimerViewModel(timerInfo: TimerInfo) : ViewModel() {
   fun start() {
     viewModelScope.launch {
       if (timerUiState is TimerUiState.Idle || timerUiState is TimerUiState.Finish) {
-        timerUiState = TimerUiState.Loading(timerUiState.time, "")
+        timerUiState = TimerUiState.Loading(timerInfo.time, "")
+        battleTimer = battleTimer.copy(time = timerInfo.time)
 
         delay(2000)
 
