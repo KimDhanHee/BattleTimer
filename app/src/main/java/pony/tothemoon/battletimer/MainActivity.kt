@@ -20,10 +20,10 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import pony.tothemoon.battletimer.model.TimerInfo
-import pony.tothemoon.battletimer.ui.components.TimerDestination
-import pony.tothemoon.battletimer.ui.components.TimerListScreen
 import pony.tothemoon.battletimer.ui.components.BattleTimerScreen
 import pony.tothemoon.battletimer.ui.components.MyTimerScreen
+import pony.tothemoon.battletimer.ui.components.TimerDestination
+import pony.tothemoon.battletimer.ui.components.TimerListScreen
 import pony.tothemoon.battletimer.ui.theme.BattleTimerTheme
 import pony.tothemoon.battletimer.ui.theme.Gray100
 
