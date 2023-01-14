@@ -38,7 +38,7 @@ import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.ui.theme.White900
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModelFactory
-import pony.tothemoon.battletimer.viewmodel.TimerUiState
+import pony.tothemoon.battletimer.viewmodel.BattleTimerUiState
 
 @Composable
 fun BattleTimerScreen(
@@ -72,19 +72,19 @@ fun BattleTimerScreen(
       )
     }
 
-    if (timerUiState is TimerUiState.Loading) {
+    if (timerUiState is BattleTimerUiState.Loading) {
       LoadingScreen()
     }
 
-    if (timerUiState is TimerUiState.Ready) {
+    if (timerUiState is BattleTimerUiState.Ready) {
       ReadyScreen(timerUiState.countdown)
     }
   }
 }
 
-private fun back(navController: NavHostController, timerUiState: TimerUiState) {
+private fun back(navController: NavHostController, timerUiState: BattleTimerUiState) {
   when (timerUiState) {
-    is TimerUiState.Finish -> victory(navController)
+    is BattleTimerUiState.Finish -> victory(navController)
     else -> giveUp(navController)
   }
 }
@@ -107,7 +107,7 @@ private fun victory(navController: NavHostController) {
 private fun Body(
   myTimer: TimerInfo,
   battleTimer: TimerInfo,
-  timerUiState: TimerUiState,
+  timerUiState: BattleTimerUiState,
   modifier: Modifier = Modifier,
 ) {
   Column(modifier = modifier.padding(top = 36.dp)) {
@@ -139,17 +139,17 @@ private fun Body(
 
 @Composable
 private fun Footer(
-  timerUiState: TimerUiState,
+  battleTimerUiState: BattleTimerUiState,
   onClickStart: () -> Unit,
   onCancel: () -> Unit,
   onFinish: () -> Unit,
 ) {
   val backgroundColor = when {
-    timerUiState.displayBattle -> Color.White
+    battleTimerUiState.displayBattle -> Color.White
     else -> Gray100
   }
   val buttonColor = when {
-    timerUiState.displayBattle -> Gray100
+    battleTimerUiState.displayBattle -> Gray100
     else -> Color.White
   }
 
@@ -160,20 +160,20 @@ private fun Footer(
       .padding(vertical = 20.dp),
     horizontalArrangement = Arrangement.Center
   ) {
-    when (timerUiState) {
-      is TimerUiState.Idle ->
+    when (battleTimerUiState) {
+      is BattleTimerUiState.Idle ->
         TimerButton(
           text = "배틀 시작하기",
           color = buttonColor,
           onClick = onClickStart
         )
-      is TimerUiState.Loading, is TimerUiState.Ready, is TimerUiState.Running ->
+      is BattleTimerUiState.Loading, is BattleTimerUiState.Ready, is BattleTimerUiState.Running ->
         TimerButton(
           text = "포기하기",
           color = buttonColor,
           onClick = onCancel
         )
-      is TimerUiState.Finish -> {
+      is BattleTimerUiState.Finish -> {
         TimerButton(
           text = "한번 더 하기",
           color = buttonColor,
