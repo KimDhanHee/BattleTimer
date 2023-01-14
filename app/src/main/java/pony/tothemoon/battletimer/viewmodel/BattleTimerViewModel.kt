@@ -31,7 +31,7 @@ class BattleTimerViewModel(timerInfo: TimerInfo) : ViewModel() {
 
   fun start() {
     viewModelScope.launch {
-      if (timerUiState is TimerUiState.Idle) {
+      if (timerUiState is TimerUiState.Idle || timerUiState is TimerUiState.Finish) {
         timerUiState = TimerUiState.Loading(timerUiState.time, "")
 
         delay(2000)
