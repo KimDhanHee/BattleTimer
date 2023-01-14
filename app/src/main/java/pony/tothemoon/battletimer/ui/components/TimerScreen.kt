@@ -2,6 +2,7 @@ package pony.tothemoon.battletimer.ui.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,9 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
@@ -36,6 +38,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
+import pony.tothemoon.battletimer.ui.theme.Gray100
+import pony.tothemoon.battletimer.ui.theme.White900
 import pony.tothemoon.battletimer.viewmodel.TimerUiState
 import pony.tothemoon.battletimer.viewmodel.TimerViewModel
 import pony.tothemoon.battletimer.viewmodel.TimerViewModelFactory
@@ -52,7 +56,9 @@ fun TimerScreen(
     BackHandler { back(navController, timerUiState) }
 
     Column(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier
+        .fillMaxSize()
+        .background(color = Gray100),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Header(text = timerInfo.title, onClickBack = { back(navController, timerUiState) })
@@ -66,8 +72,7 @@ fun TimerScreen(
         timerUiState,
         onClickStart = { timerViewModel.start() },
         onCancel = { giveUp(navController) },
-        onFinish = { navController.navigateUp() },
-        modifier = Modifier.padding(vertical = 20.dp)
+        onFinish = { victory(navController) },
       )
     }
 
@@ -83,7 +88,7 @@ fun TimerScreen(
 
 private fun back(navController: NavHostController, timerUiState: TimerUiState) {
   when (timerUiState) {
-    is TimerUiState.Finish -> navController.navigateUp()
+    is TimerUiState.Finish -> victory(navController)
     else -> giveUp(navController)
   }
 }
@@ -95,20 +100,35 @@ private fun giveUp(navController: NavHostController) {
   navController.navigateUp()
 }
 
+private fun victory(navController: NavHostController) {
+  navController.previousBackStackEntry
+    ?.savedStateHandle
+    ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)
+  navController.navigateUp()
+}
+
 @Composable
 private fun Header(text: String, onClickBack: () -> Unit) {
-  Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+  Row(modifier = Modifier
+    .fillMaxWidth()
+    .padding(all = 16.dp),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
     Icon(
-      imageVector = Icons.Filled.ArrowBack,
+      imageVector = Icons.Filled.ArrowBackIos,
       contentDescription = null,
       modifier = Modifier
         .size(48.dp)
-        .clickable { onClickBack() }
+        .padding(8.dp)
+        .clickable { onClickBack() },
+      tint = Color.White
     )
     Text(
       text = text,
       modifier = Modifier.weight(1f),
-      textAlign = TextAlign.Center
+      color = Color.White,
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.titleLarge
     )
     Spacer(modifier = Modifier.size(48.dp))
   }
@@ -121,7 +141,7 @@ private fun Body(
   timerUiState: TimerUiState,
   modifier: Modifier = Modifier,
 ) {
-  Column(modifier = modifier.padding(top = 60.dp)) {
+  Column(modifier = modifier.padding(top = 36.dp)) {
     Timer(
       title = "My Timer",
       totalTime = myTimer.time,
@@ -139,7 +159,10 @@ private fun Body(
         runningTime = battleTimer.time,
         modifier = Modifier
           .weight(1f)
-          .padding(horizontal = 20.dp)
+          .background(color = Color.White)
+          .padding(horizontal = 20.dp),
+        titleColor = Gray100,
+        timerColor = Gray100
       )
     }
   }
@@ -151,28 +174,64 @@ private fun Footer(
   onClickStart: () -> Unit,
   onCancel: () -> Unit,
   onFinish: () -> Unit,
-  modifier: Modifier = Modifier,
 ) {
-  Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+  val backgroundColor = when {
+    timerUiState.displayBattle -> Color.White
+    else -> Gray100
+  }
+  val buttonColor = when {
+    timerUiState.displayBattle -> Gray100
+    else -> Color.White
+  }
+
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .background(color = backgroundColor)
+      .padding(vertical = 20.dp),
+    horizontalArrangement = Arrangement.Center
+  ) {
     when (timerUiState) {
-      is TimerUiState.Idle -> OutlinedButton(onClick = onClickStart) {
-        Text(text = "배틀 시작하기")
-      }
-      is TimerUiState.Loading, is TimerUiState.Ready, is TimerUiState.Running -> {
-        OutlinedButton(onClick = onCancel) {
-          Text(text = "포기하기")
-        }
-      }
+      is TimerUiState.Idle ->
+        TimerButton(
+          text = "배틀 시작하기",
+          color = buttonColor,
+          onClick = onClickStart
+        )
+      is TimerUiState.Loading, is TimerUiState.Ready, is TimerUiState.Running ->
+        TimerButton(
+          text = "포기하기",
+          color = buttonColor,
+          onClick = onCancel
+        )
       is TimerUiState.Finish -> {
-        OutlinedButton(onClick = onClickStart) {
-          Text(text = "한번 더 하기")
-        }
+        TimerButton(
+          text = "한번 더 하기",
+          color = buttonColor,
+          onClick = onClickStart
+        )
         Spacer(modifier = Modifier.size(20.dp))
-        OutlinedButton(onClick = onFinish) {
-          Text(text = "종료하기")
-        }
+        TimerButton(
+          text = "종료하기",
+          color = buttonColor,
+          onClick = onFinish
+        )
       }
     }
+  }
+}
+
+@Composable
+private fun TimerButton(text: String, color: Color, onClick: () -> Unit) {
+  OutlinedButton(
+    onClick = onClick,
+    border = BorderStroke(width = 1.dp, color = color)
+  ) {
+    Text(
+      text = text,
+      color = color,
+      style = MaterialTheme.typography.labelMedium
+    )
   }
 }
 
@@ -182,10 +241,29 @@ private fun Timer(
   totalTime: Long,
   runningTime: Long,
   modifier: Modifier = Modifier,
+  titleColor: Color = Color.White,
+  timerColor: Color = Color.White,
 ) {
-  Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-    Text(text = title)
-    Text(text = runningTime.timeStr, modifier = Modifier.padding(vertical = 16.dp))
+  Column(
+    modifier = modifier
+      .fillMaxWidth(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Spacer(modifier = Modifier.size(20.dp))
+    Text(
+      text = title,
+      color = titleColor,
+      style = MaterialTheme.typography.labelMedium
+    )
+    Text(
+      text = runningTime.timeStr,
+      modifier = Modifier
+        .padding(vertical = 16.dp)
+        .fillMaxWidth(),
+      color = timerColor,
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.displayLarge
+    )
 
     val progress by animateFloatAsState(
       targetValue = runningTime / totalTime.toFloat(),
@@ -196,7 +274,9 @@ private fun Timer(
       modifier = Modifier
         .fillMaxWidth()
         .height(20.dp)
-        .clip(shape = RoundedCornerShape(6.dp))
+        .clip(shape = RoundedCornerShape(6.dp)),
+      color = timerColor,
+      trackColor = White900
     )
   }
 }
@@ -209,7 +289,11 @@ private fun LoadingScreen() {
       .background(color = Color.Gray.copy(alpha = 0.5f)),
     contentAlignment = Alignment.Center
   ) {
-    Text(text = "Loading...", color = Color.White)
+    Text(
+      text = "상대방 탐색 중 입니다...",
+      color = Color.White,
+      style = MaterialTheme.typography.displaySmall
+    )
   }
 }
 
@@ -221,6 +305,10 @@ private fun ReadyScreen(countdown: Int) {
       .background(color = Color.Gray.copy(alpha = 0.5f)),
     contentAlignment = Alignment.Center
   ) {
-    Text(text = "$countdown", color = Color.White)
+    Text(
+      text = "$countdown",
+      color = Color.White,
+      style = MaterialTheme.typography.displayLarge
+    )
   }
 }
