@@ -48,7 +48,7 @@ class TimerListViewModel : ViewModel() {
       TimerInfo(title = "15분 타이머", time = 15 * TimerInfo.MINUTE_UNIT),
       TimerInfo(title = "20분 타이머", time = 20 * TimerInfo.MINUTE_UNIT),
       TimerInfo(title = "30분 타이머", time = 30 * TimerInfo.MINUTE_UNIT),
-      TimerInfo(title = "60분 타이머", time = 30 * TimerInfo.MINUTE_UNIT)
+      TimerInfo(title = "60분 타이머", time = 60 * TimerInfo.MINUTE_UNIT)
     )
   }
 }
