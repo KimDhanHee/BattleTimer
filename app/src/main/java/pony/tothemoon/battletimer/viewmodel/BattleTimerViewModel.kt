@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.model.TimerInfo
 
-class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
+class BattleTimerViewModel(timerInfo: TimerInfo) : ViewModel() {
   var battleTimer by mutableStateOf(TimerInfo(title = "익명의 코뿔소", time = timerInfo.time))
     private set
 
@@ -60,12 +60,12 @@ sealed class TimerUiState {
     get() = this is Running || this is Finish
 }
 
-class TimerViewModelFactory(
+class BattleTimerViewModelFactory(
   private val timerInfo: TimerInfo,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    if (modelClass.isAssignableFrom(TimerViewModel::class.java)) {
-      return TimerViewModel(timerInfo) as T
+    if (modelClass.isAssignableFrom(BattleTimerViewModel::class.java)) {
+      return BattleTimerViewModel(timerInfo) as T
     }
     throw IllegalArgumentException()
   }

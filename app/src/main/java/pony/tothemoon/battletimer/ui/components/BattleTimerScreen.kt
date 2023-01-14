@@ -41,17 +41,17 @@ import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.ui.theme.White900
 import pony.tothemoon.battletimer.viewmodel.TimerUiState
-import pony.tothemoon.battletimer.viewmodel.TimerViewModel
-import pony.tothemoon.battletimer.viewmodel.TimerViewModelFactory
+import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
+import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModelFactory
 
 @Composable
-fun TimerScreen(
+fun BattleTimerScreen(
   timerInfo: TimerInfo,
   navController: NavHostController,
-  timerViewModel: TimerViewModel = viewModel(factory = TimerViewModelFactory(timerInfo)),
+  viewmodel: BattleTimerViewModel = viewModel(factory = BattleTimerViewModelFactory(timerInfo)),
 ) {
   Box(modifier = Modifier.fillMaxSize()) {
-    val timerUiState = timerViewModel.timerUiState
+    val timerUiState = viewmodel.timerUiState
 
     BackHandler { back(navController, timerUiState) }
 
@@ -64,13 +64,13 @@ fun TimerScreen(
       Header(text = timerInfo.title, onClickBack = { back(navController, timerUiState) })
       Body(
         myTimer = timerInfo,
-        battleTimer = timerViewModel.battleTimer,
+        battleTimer = viewmodel.battleTimer,
         timerUiState = timerUiState,
         modifier = Modifier.weight(1f)
       )
       Footer(
         timerUiState,
-        onClickStart = { timerViewModel.start() },
+        onClickStart = { viewmodel.start() },
         onCancel = { giveUp(navController) },
         onFinish = { victory(navController) },
       )
