@@ -15,9 +15,18 @@ sealed class TimerDestination {
     const val KEY_IS_CANCEL = "is_cancel"
   }
 
-  object Timer : TimerDestination() {
+  object BattleTimer : TimerDestination() {
     override val route: String
-      get() = "timer"
+      get() = "battle_timer"
+    const val timerInfoArg = "timerInfo"
+    val routeWithArgs = "$route/{$timerInfoArg}"
+    val arguments = listOf(navArgument(timerInfoArg) { type = TimerNavType() })
+  }
+
+  object MyTimer : TimerDestination() {
+    override val route: String
+      get() = "my_timer"
+
     const val timerInfoArg = "timerInfo"
     val routeWithArgs = "$route/{$timerInfoArg}"
     val arguments = listOf(navArgument(timerInfoArg) { type = TimerNavType() })

@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.model.TimerInfo
 
-class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
+class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   var battleTimer by mutableStateOf(TimerInfo(title = "익명의 코뿔소", time = timerInfo.time))
     private set
 
@@ -18,27 +18,28 @@ class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
     while (timerUiState.time > 0) {
       delay(TimerInfo.SECONDS_UNIT)
 
-      timerUiState = TimerUiState.Running(timerUiState.time - TimerInfo.SECONDS_UNIT)
+      timerUiState = BattleTimerUiState.Running(timerUiState.time - TimerInfo.SECONDS_UNIT)
 
       battleTimer = battleTimer.copy(time = battleTimer.time - TimerInfo.SECONDS_UNIT)
     }
 
-    timerUiState = TimerUiState.Finish(timerUiState.time)
+    timerUiState = BattleTimerUiState.Finish(timerUiState.time)
   }
 
-  var timerUiState: TimerUiState by mutableStateOf(TimerUiState.Idle(timerInfo.time))
+  var timerUiState: BattleTimerUiState by mutableStateOf(BattleTimerUiState.Idle(timerInfo.time))
     private set
 
   fun start() {
     viewModelScope.launch {
-      if (timerUiState is TimerUiState.Idle) {
-        timerUiState = TimerUiState.Loading(timerUiState.time, "")
+      if (timerUiState is BattleTimerUiState.Idle || timerUiState is BattleTimerUiState.Finish) {
+        timerUiState = BattleTimerUiState.Loading(timerInfo.time, "")
+        battleTimer = battleTimer.copy(time = timerInfo.time)
 
         delay(2000)
 
         repeat(3) {
           delay(TimerInfo.SECONDS_UNIT)
-          timerUiState = TimerUiState.Ready(timerUiState.time, 3 - it)
+          timerUiState = BattleTimerUiState.Ready(timerUiState.time, 3 - it)
         }
 
         startBattle()
@@ -47,12 +48,12 @@ class TimerViewModel(timerInfo: TimerInfo) : ViewModel() {
   }
 }
 
-sealed class TimerUiState {
-  data class Idle(override val time: Long) : TimerUiState()
-  data class Loading(override val time: Long, val text: String) : TimerUiState()
-  data class Ready(override val time: Long, val countdown: Int) : TimerUiState()
-  data class Running(override val time: Long) : TimerUiState()
-  data class Finish(override val time: Long) : TimerUiState()
+sealed class BattleTimerUiState {
+  data class Idle(override val time: Long) : BattleTimerUiState()
+  data class Loading(override val time: Long, val text: String) : BattleTimerUiState()
+  data class Ready(override val time: Long, val countdown: Int) : BattleTimerUiState()
+  data class Running(override val time: Long) : BattleTimerUiState()
+  data class Finish(override val time: Long) : BattleTimerUiState()
 
   abstract val time: Long
 
@@ -60,12 +61,12 @@ sealed class TimerUiState {
     get() = this is Running || this is Finish
 }
 
-class TimerViewModelFactory(
+class BattleTimerViewModelFactory(
   private val timerInfo: TimerInfo,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    if (modelClass.isAssignableFrom(TimerViewModel::class.java)) {
-      return TimerViewModel(timerInfo) as T
+    if (modelClass.isAssignableFrom(BattleTimerViewModel::class.java)) {
+      return BattleTimerViewModel(timerInfo) as T
     }
     throw IllegalArgumentException()
   }

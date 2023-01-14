@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,9 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIos
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -40,18 +36,18 @@ import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.ui.theme.White900
-import pony.tothemoon.battletimer.viewmodel.TimerUiState
-import pony.tothemoon.battletimer.viewmodel.TimerViewModel
-import pony.tothemoon.battletimer.viewmodel.TimerViewModelFactory
+import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
+import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModelFactory
+import pony.tothemoon.battletimer.viewmodel.BattleTimerUiState
 
 @Composable
-fun TimerScreen(
+fun BattleTimerScreen(
   timerInfo: TimerInfo,
   navController: NavHostController,
-  timerViewModel: TimerViewModel = viewModel(factory = TimerViewModelFactory(timerInfo)),
+  viewmodel: BattleTimerViewModel = viewModel(factory = BattleTimerViewModelFactory(timerInfo)),
 ) {
   Box(modifier = Modifier.fillMaxSize()) {
-    val timerUiState = timerViewModel.timerUiState
+    val timerUiState = viewmodel.timerUiState
 
     BackHandler { back(navController, timerUiState) }
 
@@ -64,31 +60,31 @@ fun TimerScreen(
       Header(text = timerInfo.title, onClickBack = { back(navController, timerUiState) })
       Body(
         myTimer = timerInfo,
-        battleTimer = timerViewModel.battleTimer,
+        battleTimer = viewmodel.battleTimer,
         timerUiState = timerUiState,
         modifier = Modifier.weight(1f)
       )
       Footer(
         timerUiState,
-        onClickStart = { timerViewModel.start() },
+        onClickStart = { viewmodel.start() },
         onCancel = { giveUp(navController) },
         onFinish = { victory(navController) },
       )
     }
 
-    if (timerUiState is TimerUiState.Loading) {
+    if (timerUiState is BattleTimerUiState.Loading) {
       LoadingScreen()
     }
 
-    if (timerUiState is TimerUiState.Ready) {
+    if (timerUiState is BattleTimerUiState.Ready) {
       ReadyScreen(timerUiState.countdown)
     }
   }
 }
 
-private fun back(navController: NavHostController, timerUiState: TimerUiState) {
+private fun back(navController: NavHostController, timerUiState: BattleTimerUiState) {
   when (timerUiState) {
-    is TimerUiState.Finish -> victory(navController)
+    is BattleTimerUiState.Finish -> victory(navController)
     else -> giveUp(navController)
   }
 }
@@ -108,37 +104,10 @@ private fun victory(navController: NavHostController) {
 }
 
 @Composable
-private fun Header(text: String, onClickBack: () -> Unit) {
-  Row(modifier = Modifier
-    .fillMaxWidth()
-    .padding(all = 16.dp),
-    verticalAlignment = Alignment.CenterVertically
-  ) {
-    Icon(
-      imageVector = Icons.Filled.ArrowBackIos,
-      contentDescription = null,
-      modifier = Modifier
-        .size(48.dp)
-        .padding(8.dp)
-        .clickable { onClickBack() },
-      tint = Color.White
-    )
-    Text(
-      text = text,
-      modifier = Modifier.weight(1f),
-      color = Color.White,
-      textAlign = TextAlign.Center,
-      style = MaterialTheme.typography.titleLarge
-    )
-    Spacer(modifier = Modifier.size(48.dp))
-  }
-}
-
-@Composable
 private fun Body(
   myTimer: TimerInfo,
   battleTimer: TimerInfo,
-  timerUiState: TimerUiState,
+  timerUiState: BattleTimerUiState,
   modifier: Modifier = Modifier,
 ) {
   Column(modifier = modifier.padding(top = 36.dp)) {
@@ -170,17 +139,17 @@ private fun Body(
 
 @Composable
 private fun Footer(
-  timerUiState: TimerUiState,
+  battleTimerUiState: BattleTimerUiState,
   onClickStart: () -> Unit,
   onCancel: () -> Unit,
   onFinish: () -> Unit,
 ) {
   val backgroundColor = when {
-    timerUiState.displayBattle -> Color.White
+    battleTimerUiState.displayBattle -> Color.White
     else -> Gray100
   }
   val buttonColor = when {
-    timerUiState.displayBattle -> Gray100
+    battleTimerUiState.displayBattle -> Gray100
     else -> Color.White
   }
 
@@ -191,20 +160,20 @@ private fun Footer(
       .padding(vertical = 20.dp),
     horizontalArrangement = Arrangement.Center
   ) {
-    when (timerUiState) {
-      is TimerUiState.Idle ->
+    when (battleTimerUiState) {
+      is BattleTimerUiState.Idle ->
         TimerButton(
           text = "배틀 시작하기",
           color = buttonColor,
           onClick = onClickStart
         )
-      is TimerUiState.Loading, is TimerUiState.Ready, is TimerUiState.Running ->
+      is BattleTimerUiState.Loading, is BattleTimerUiState.Ready, is BattleTimerUiState.Running ->
         TimerButton(
           text = "포기하기",
           color = buttonColor,
           onClick = onCancel
         )
-      is TimerUiState.Finish -> {
+      is BattleTimerUiState.Finish -> {
         TimerButton(
           text = "한번 더 하기",
           color = buttonColor,
