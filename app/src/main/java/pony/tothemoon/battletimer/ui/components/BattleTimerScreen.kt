@@ -90,7 +90,7 @@ fun BattleTimerScreen(
       Footer(
         timerUiState,
         onClickStart = { viewmodel.start() },
-        onCancel = { cancel(navController) },
+        onCancel = { onBack() },
         onFinish = { dismiss(navController) },
       )
     }
