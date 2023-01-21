@@ -45,7 +45,8 @@ class MainActivity : ComponentActivity() {
         val activeTimer by TimerDataStore.activeTimerFlow.collectAsState(null)
 
         LaunchedEffect(activeTimer) {
-          val needToNavigate = navController.currentDestination?.route == TimerDestination.TimerList.route
+          val needToNavigate =
+            navController.currentDestination?.route == TimerDestination.TimerList.route
           if (needToNavigate) {
             when {
               activeTimer?.isBattle == true ->

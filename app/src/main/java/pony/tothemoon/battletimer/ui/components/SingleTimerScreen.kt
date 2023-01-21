@@ -30,9 +30,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import pony.tothemoon.battletimer.R
+import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
-import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.viewmodel.SingleTimerUiState
 import pony.tothemoon.battletimer.viewmodel.SingleTimerViewModel
