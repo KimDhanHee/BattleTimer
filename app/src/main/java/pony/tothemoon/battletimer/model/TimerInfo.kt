@@ -11,6 +11,8 @@ data class TimerInfo(
   val id: Int = 0,
   val title: String = "",
   val time: Long = 0L,
+  val remainedTime: Long = time,
+  val state: State = State.IDLE,
 ) {
   override fun toString(): String = Uri.encode(Json.encodeToString(this))
 
@@ -18,6 +20,13 @@ data class TimerInfo(
     const val HOUR_UNIT = 60 * 60 * 1000L
     const val MINUTE_UNIT = 60 * 1000L
     const val SECONDS_UNIT = 1000L
+  }
+
+  enum class State {
+    IDLE,
+    RUNNING,
+    PAUSE,
+    ;
   }
 }
 

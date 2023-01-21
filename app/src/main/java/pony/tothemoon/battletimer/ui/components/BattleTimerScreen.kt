@@ -36,9 +36,9 @@ import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.ui.theme.White900
+import pony.tothemoon.battletimer.viewmodel.BattleTimerUiState
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModelFactory
-import pony.tothemoon.battletimer.viewmodel.BattleTimerUiState
 
 @Composable
 fun BattleTimerScreen(

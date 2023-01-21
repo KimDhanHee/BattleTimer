@@ -74,4 +74,6 @@ dependencies {
     implementation(libs.androidx.lifecycle)
 
     implementation(libs.kotlinx.serialization)
+
+    implementation(libs.datastore)
 }

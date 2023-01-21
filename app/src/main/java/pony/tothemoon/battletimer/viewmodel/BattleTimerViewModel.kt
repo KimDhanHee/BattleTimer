@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.model.TimerInfo
 
 class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
-  var battleTimer by mutableStateOf(TimerInfo(title = "익명의 코뿔소", time = timerInfo.time))
+  var battleTimer by mutableStateOf(TimerInfo(title = "익명의 코뿔소", time = timerInfo.remainedTime))
     private set
 
   private suspend fun startBattle() {
