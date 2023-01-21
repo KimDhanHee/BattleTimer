@@ -1,5 +1,6 @@
 package pony.tothemoon.battletimer.ui.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,9 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,14 +56,42 @@ fun SingleTimerScreen(
     }
   }
 
+  var showDialog by remember { mutableStateOf(false) }
+  if (showDialog) {
+    ExitDialog(
+      title = "종료하시겠습니까?",
+      positive = "네",
+      negative = "아니오",
+      onClickOk = {
+        showDialog = false
+
+        viewmodel.dismiss()
+        cancel(navController)
+      },
+      onClickCancel = {
+        showDialog = false
+      }
+    )
+  }
+
+  val timerUiState = viewmodel.timerUiState
+
+  val onBack = {
+    when {
+      timerUiState.isActive -> showDialog = true
+      timerUiState is SingleTimerUiState.Idle -> cancel(navController)
+      timerUiState is SingleTimerUiState.Finish -> dismiss(navController)
+    }
+  }
+
+  BackHandler { onBack() }
+
   Column(
     modifier = Modifier
       .fillMaxSize()
       .background(color = Gray100)
   ) {
-    val timerUiState = viewmodel.timerUiState
-
-    Header(text = timerInfo.title, onClickBack = { navController.navigateUp() })
+    Header(text = timerInfo.title, onClickBack = { onBack() })
     Body(
       timerInfo = timerInfo,
       timerUiState = timerUiState,
@@ -70,6 +102,20 @@ fun SingleTimerScreen(
     )
     Spacer(modifier = Modifier.size(100.dp))
   }
+}
+
+private fun cancel(navController: NavHostController) {
+  navController.previousBackStackEntry
+    ?.savedStateHandle
+    ?.set(TimerDestination.TimerList.KEY_IS_CANCEL, true)
+  navController.navigateUp()
+}
+
+private fun dismiss(navController: NavHostController) {
+  navController.previousBackStackEntry
+    ?.savedStateHandle
+    ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)
+  navController.navigateUp()
 }
 
 @Composable
