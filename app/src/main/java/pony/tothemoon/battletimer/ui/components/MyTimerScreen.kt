@@ -26,11 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
+import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.viewmodel.MyTimerUiState
 import pony.tothemoon.battletimer.viewmodel.MyTimerViewModel
@@ -42,9 +44,19 @@ fun MyTimerScreen(
   navController: NavHostController,
   viewmodel: MyTimerViewModel = viewModel(factory = MyTimerViewModelFactory(timerInfo)),
 ) {
-  Column(modifier = Modifier
-    .fillMaxSize()
-    .background(color = Gray100)) {
+  onLifecycleEvent { event ->
+    when (event) {
+      Lifecycle.Event.ON_CREATE -> viewmodel.clear()
+      Lifecycle.Event.ON_PAUSE -> viewmodel.save()
+      else -> Unit
+    }
+  }
+
+  Column(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(color = Gray100)
+  ) {
     val timerUiState = viewmodel.timerUiState
 
     Header(text = timerInfo.title, onClickBack = { navController.navigateUp() })

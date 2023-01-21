@@ -6,16 +6,29 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pony.tothemoon.battletimer.datastore.ActiveTimer
+import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.model.TimerInfo
 
 class MyTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
-  var timerUiState: MyTimerUiState by mutableStateOf(MyTimerUiState.Idle(timerInfo.time))
+  var timerUiState: MyTimerUiState by mutableStateOf(MyTimerUiState.Idle(timerInfo.remainedTime))
     private set
 
   private var timerJob: Job? = null
+
+  init {
+    when (timerInfo.state) {
+      TimerInfo.State.RUNNING -> start()
+      TimerInfo.State.PAUSE ->
+        timerUiState = MyTimerUiState.Pause(timerInfo.remainedTime)
+      TimerInfo.State.IDLE -> Unit
+    }
+  }
 
   fun start() {
     timerJob = viewModelScope.launch {
@@ -35,6 +48,33 @@ class MyTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
   fun dismiss() {
     timerUiState = MyTimerUiState.Idle(timerInfo.time)
+    clear()
+  }
+
+  fun save() {
+    if (timerUiState.isActive) {
+      CoroutineScope(Dispatchers.IO).launch {
+        TimerDataStore.save(
+          ActiveTimer(
+            isBattle = false,
+            _timerInfo = timerInfo.copy(
+              remainedTime = timerUiState.time,
+              state = when (timerUiState) {
+                is MyTimerUiState.Running -> TimerInfo.State.RUNNING
+                is MyTimerUiState.Pause -> TimerInfo.State.PAUSE
+                else -> TimerInfo.State.IDLE
+              }
+            )
+          )
+        )
+      }
+    }
+  }
+
+  fun clear() {
+    CoroutineScope(Dispatchers.IO).launch {
+      TimerDataStore.clear()
+    }
   }
 }
 
@@ -44,6 +84,7 @@ sealed class MyTimerUiState {
   data class Pause(override val time: Long) : MyTimerUiState()
   data class Finish(override val time: Long) : MyTimerUiState()
 
+  val isActive: Boolean get() = this is Running || this is Pause
   abstract val time: Long
 }
 

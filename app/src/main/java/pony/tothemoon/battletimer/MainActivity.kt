@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.ui.components.BattleTimerScreen
 import pony.tothemoon.battletimer.ui.components.MyTimerScreen
@@ -40,6 +42,19 @@ class MainActivity : ComponentActivity() {
     BattleTimerTheme {
       Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         val navController = rememberNavController()
+        val activeTimer by TimerDataStore.activeTimerFlow.collectAsState(null)
+
+        LaunchedEffect(activeTimer) {
+          val needToNavigate = navController.currentDestination?.route == TimerDestination.TimerList.route
+          if (needToNavigate) {
+            when {
+              activeTimer?.isBattle == true ->
+                navController.navigateToSingleTop("${TimerDestination.BattleTimer.route}/${activeTimer!!.timerInfo}")
+              activeTimer?.isSingle == true ->
+                navController.navigateToSingleTop("${TimerDestination.MyTimer.route}/${activeTimer!!.timerInfo}")
+            }
+          }
+        }
 
         NavHost(navController, startDestination = TimerDestination.TimerList.route) {
           composable(
