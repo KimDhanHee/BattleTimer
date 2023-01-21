@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,14 +26,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import pony.tothemoon.battletimer.model.TimerInfo
@@ -57,17 +53,21 @@ fun BattleTimerScreen(
     var showDialog by remember { mutableStateOf(false) }
     if (showDialog) {
       ExitDialog(
+        title = "먼저 마무리 하시겠어요?",
+        positive = "그만 할래",
+        negative = "더 해볼게",
         onClickCancel = { showDialog = false },
         onClickOk = {
           showDialog = false
-          giveUp(navController)
+          cancel(navController)
         }
       )
     }
 
     val onBack = {
       when (timerUiState) {
-        is BattleTimerUiState.Finish -> victory(navController)
+        is BattleTimerUiState.Idle -> cancel(navController)
+        is BattleTimerUiState.Finish -> dismiss(navController)
         else -> showDialog = true
       }
     }
@@ -90,8 +90,8 @@ fun BattleTimerScreen(
       Footer(
         timerUiState,
         onClickStart = { viewmodel.start() },
-        onCancel = { giveUp(navController) },
-        onFinish = { victory(navController) },
+        onCancel = { cancel(navController) },
+        onFinish = { dismiss(navController) },
       )
     }
 
@@ -105,14 +105,14 @@ fun BattleTimerScreen(
   }
 }
 
-private fun giveUp(navController: NavHostController) {
+private fun cancel(navController: NavHostController) {
   navController.previousBackStackEntry
     ?.savedStateHandle
     ?.set(TimerDestination.TimerList.KEY_IS_CANCEL, true)
   navController.navigateUp()
 }
 
-private fun victory(navController: NavHostController) {
+private fun dismiss(navController: NavHostController) {
   navController.previousBackStackEntry
     ?.savedStateHandle
     ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)
@@ -295,50 +295,5 @@ private fun ReadyScreen(countdown: Int) {
       color = Color.White,
       style = MaterialTheme.typography.displayLarge
     )
-  }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-private fun ExitDialog(
-  onClickCancel: () -> Unit,
-  onClickOk: () -> Unit,
-) {
-  Dialog(
-    onDismissRequest = onClickCancel,
-    properties = DialogProperties(usePlatformDefaultWidth = false)
-  ) {
-    Column(
-      modifier = Modifier
-        .padding(42.dp)
-        .background(color = Color.White, shape = RoundedCornerShape(6.dp))
-        .padding(24.dp),
-      horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-      Text(
-        text = "먼저 마무리 하시겠어요?",
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.labelLarge
-      )
-      Spacer(modifier = Modifier.size(32.dp))
-      Row(modifier = Modifier.fillMaxWidth()) {
-        Text(
-          text = "그만 할래",
-          modifier = Modifier
-            .weight(1f)
-            .clickable { onClickOk() },
-          textAlign = TextAlign.Center,
-          style = MaterialTheme.typography.labelMedium
-        )
-        Text(
-          text = "더 해볼게",
-          modifier = Modifier
-            .weight(1f)
-            .clickable { onClickCancel() },
-          textAlign = TextAlign.Center,
-          style = MaterialTheme.typography.labelMedium
-        )
-      }
-    }
   }
 }
