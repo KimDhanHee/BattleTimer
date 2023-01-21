@@ -23,9 +23,9 @@ sealed class TimerDestination {
     val arguments = listOf(navArgument(timerInfoArg) { type = TimerNavType() })
   }
 
-  object MyTimer : TimerDestination() {
+  object SingleTimer : TimerDestination() {
     override val route: String
-      get() = "my_timer"
+      get() = "single_timer"
 
     const val timerInfoArg = "timerInfo"
     val routeWithArgs = "$route/{$timerInfoArg}"

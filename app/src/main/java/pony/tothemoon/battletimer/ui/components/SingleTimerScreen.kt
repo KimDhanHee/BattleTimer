@@ -34,15 +34,15 @@ import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.ui.theme.Gray100
-import pony.tothemoon.battletimer.viewmodel.MyTimerUiState
-import pony.tothemoon.battletimer.viewmodel.MyTimerViewModel
-import pony.tothemoon.battletimer.viewmodel.MyTimerViewModelFactory
+import pony.tothemoon.battletimer.viewmodel.SingleTimerUiState
+import pony.tothemoon.battletimer.viewmodel.SingleTimerViewModel
+import pony.tothemoon.battletimer.viewmodel.SingleTimerViewModelFactory
 
 @Composable
-fun MyTimerScreen(
+fun SingleTimerScreen(
   timerInfo: TimerInfo,
   navController: NavHostController,
-  viewmodel: MyTimerViewModel = viewModel(factory = MyTimerViewModelFactory(timerInfo)),
+  viewmodel: SingleTimerViewModel = viewModel(factory = SingleTimerViewModelFactory(timerInfo)),
 ) {
   onLifecycleEvent { event ->
     when (event) {
@@ -75,7 +75,7 @@ fun MyTimerScreen(
 @Composable
 private fun Body(
   timerInfo: TimerInfo,
-  timerUiState: MyTimerUiState,
+  timerUiState: SingleTimerUiState,
   onClickStart: () -> Unit,
   onClickPause: () -> Unit,
   onClickDismiss: () -> Unit,
@@ -88,7 +88,7 @@ private fun Body(
       modifier = Modifier.size((LocalConfiguration.current.screenWidthDp * 0.9f).dp)
     )
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-      if (timerUiState is MyTimerUiState.Finish) {
+      if (timerUiState is SingleTimerUiState.Finish) {
         Text(
           text = "타이머 종료",
           color = Color.White,
@@ -104,7 +104,7 @@ private fun Body(
       Spacer(modifier = Modifier.size(36.dp))
 
       when (timerUiState) {
-        is MyTimerUiState.Running -> {
+        is SingleTimerUiState.Running -> {
           Icon(
             painter = painterResource(id = R.drawable.ic_pause_24),
             contentDescription = null,
@@ -115,7 +115,7 @@ private fun Body(
             tint = Color.White
           )
         }
-        is MyTimerUiState.Finish -> {
+        is SingleTimerUiState.Finish -> {
           Button(
             onClick = { onClickDismiss() },
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 30.dp),

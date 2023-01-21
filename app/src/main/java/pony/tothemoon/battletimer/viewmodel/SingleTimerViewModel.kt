@@ -15,8 +15,8 @@ import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.model.TimerInfo
 
-class MyTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
-  var timerUiState: MyTimerUiState by mutableStateOf(MyTimerUiState.Idle(timerInfo.remainedTime))
+class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
+  var timerUiState: SingleTimerUiState by mutableStateOf(SingleTimerUiState.Idle(timerInfo.remainedTime))
     private set
 
   private var timerJob: Job? = null
@@ -25,7 +25,7 @@ class MyTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     when (timerInfo.state) {
       TimerInfo.State.RUNNING -> start()
       TimerInfo.State.PAUSE ->
-        timerUiState = MyTimerUiState.Pause(timerInfo.remainedTime)
+        timerUiState = SingleTimerUiState.Pause(timerInfo.remainedTime)
       TimerInfo.State.IDLE -> Unit
     }
   }
@@ -33,21 +33,21 @@ class MyTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   fun start() {
     timerJob = viewModelScope.launch {
       while (timerUiState.time > 0) {
-        timerUiState = MyTimerUiState.Running(timerUiState.time - 100)
+        timerUiState = SingleTimerUiState.Running(timerUiState.time - 100)
         delay(100)
       }
 
-      timerUiState = MyTimerUiState.Finish(0)
+      timerUiState = SingleTimerUiState.Finish(0)
     }
   }
 
   fun pause() {
     timerJob?.cancel()
-    timerUiState = MyTimerUiState.Pause(timerUiState.time)
+    timerUiState = SingleTimerUiState.Pause(timerUiState.time)
   }
 
   fun dismiss() {
-    timerUiState = MyTimerUiState.Idle(timerInfo.time)
+    timerUiState = SingleTimerUiState.Idle(timerInfo.time)
     clear()
   }
 
@@ -60,8 +60,8 @@ class MyTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
             _timerInfo = timerInfo.copy(
               remainedTime = timerUiState.time,
               state = when (timerUiState) {
-                is MyTimerUiState.Running -> TimerInfo.State.RUNNING
-                is MyTimerUiState.Pause -> TimerInfo.State.PAUSE
+                is SingleTimerUiState.Running -> TimerInfo.State.RUNNING
+                is SingleTimerUiState.Pause -> TimerInfo.State.PAUSE
                 else -> TimerInfo.State.IDLE
               }
             )
@@ -78,22 +78,22 @@ class MyTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   }
 }
 
-sealed class MyTimerUiState {
-  data class Idle(override val time: Long) : MyTimerUiState()
-  data class Running(override val time: Long) : MyTimerUiState()
-  data class Pause(override val time: Long) : MyTimerUiState()
-  data class Finish(override val time: Long) : MyTimerUiState()
+sealed class SingleTimerUiState {
+  data class Idle(override val time: Long) : SingleTimerUiState()
+  data class Running(override val time: Long) : SingleTimerUiState()
+  data class Pause(override val time: Long) : SingleTimerUiState()
+  data class Finish(override val time: Long) : SingleTimerUiState()
 
   val isActive: Boolean get() = this is Running || this is Pause
   abstract val time: Long
 }
 
-class MyTimerViewModelFactory(
+class SingleTimerViewModelFactory(
   private val timerInfo: TimerInfo,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    if (modelClass.isAssignableFrom(MyTimerViewModel::class.java)) {
-      return MyTimerViewModel(timerInfo) as T
+    if (modelClass.isAssignableFrom(SingleTimerViewModel::class.java)) {
+      return SingleTimerViewModel(timerInfo) as T
     }
     throw IllegalArgumentException()
   }

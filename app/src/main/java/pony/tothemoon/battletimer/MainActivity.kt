@@ -23,7 +23,7 @@ import kotlinx.serialization.json.Json
 import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.ui.components.BattleTimerScreen
-import pony.tothemoon.battletimer.ui.components.MyTimerScreen
+import pony.tothemoon.battletimer.ui.components.SingleTimerScreen
 import pony.tothemoon.battletimer.ui.components.TimerDestination
 import pony.tothemoon.battletimer.ui.components.TimerListScreen
 import pony.tothemoon.battletimer.ui.theme.BattleTimerTheme
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
               activeTimer?.isBattle == true ->
                 navController.navigateToSingleTop("${TimerDestination.BattleTimer.route}/${activeTimer!!.timerInfo}")
               activeTimer?.isSingle == true ->
-                navController.navigateToSingleTop("${TimerDestination.MyTimer.route}/${activeTimer!!.timerInfo}")
+                navController.navigateToSingleTop("${TimerDestination.SingleTimer.route}/${activeTimer!!.timerInfo}")
             }
           }
         }
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
             TimerListScreen(
               isCancel = isCancel,
               onClickTimer = { timerInfo ->
-                navController.navigateToSingleTop("${TimerDestination.MyTimer.route}/$timerInfo")
+                navController.navigateToSingleTop("${TimerDestination.SingleTimer.route}/$timerInfo")
               },
               onClickBattle = { timerInfo ->
                 navController.navigateToSingleTop("${TimerDestination.BattleTimer.route}/$timerInfo")
@@ -87,14 +87,14 @@ class MainActivity : ComponentActivity() {
             }
           }
           composable(
-            route = TimerDestination.MyTimer.routeWithArgs,
-            arguments = TimerDestination.MyTimer.arguments
+            route = TimerDestination.SingleTimer.routeWithArgs,
+            arguments = TimerDestination.SingleTimer.arguments
           ) { navBackStackEntry ->
             window.statusBarColor = Gray100.toArgb()
 
-            navBackStackEntry.arguments?.getString(TimerDestination.MyTimer.timerInfoArg)?.let {
+            navBackStackEntry.arguments?.getString(TimerDestination.SingleTimer.timerInfoArg)?.let {
               val timerInfo: TimerInfo = Json.decodeFromString(it)
-              MyTimerScreen(timerInfo, navController)
+              SingleTimerScreen(timerInfo, navController)
             }
           }
         }
