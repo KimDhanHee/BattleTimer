@@ -150,9 +150,9 @@ private fun Body(
   modifier: Modifier = Modifier,
 ) {
   Column(modifier = modifier.padding(top = 36.dp)) {
-    Timer(
-      totalTime = myTimer.time,
-      runningTime = timerUiState.time,
+    ProgressIndicator(
+      progress = timerUiState.time / myTimer.time.toFloat(),
+      progressText = timerUiState.time.timeStr,
       label = when (timerUiState) {
         is BattleTimerUiState.Running -> timerUiState.encourageText
         else -> ""
@@ -166,9 +166,9 @@ private fun Body(
       val battleTime by remember { mutableStateOf(battleTimer.time) }
       val displayWin =
         timerUiState is BattleTimerUiState.Running && timerUiState.hasWin || timerUiState is BattleTimerUiState.Finish
-      Timer(
-        totalTime = battleTime,
-        runningTime = battleTimer.remainedTime,
+      ProgressIndicator(
+        progress = battleTimer.remainedTime / battleTime.toFloat(),
+        progressText = battleTimer.remainedTime.timeStr,
         label = when {
           displayWin -> "익명의 코뿔소님이 포기하셨습니다"
           else -> ""
@@ -252,9 +252,9 @@ private fun TimerButton(text: String, color: Color, onClick: () -> Unit) {
 }
 
 @Composable
-private fun Timer(
-  totalTime: Long,
-  runningTime: Long,
+private fun ProgressIndicator(
+  progress: Float,
+  progressText: String,
   label: String = "",
   modifier: Modifier = Modifier,
   textColor: Color = Color.White,
@@ -265,7 +265,7 @@ private fun Timer(
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Text(
-      text = runningTime.timeStr,
+      text = progressText,
       modifier = Modifier
         .padding(vertical = 16.dp)
         .fillMaxWidth(),
@@ -274,12 +274,12 @@ private fun Timer(
       style = MaterialTheme.typography.displayLarge
     )
 
-    val progress by animateFloatAsState(
-      targetValue = runningTime / totalTime.toFloat(),
+    val progressAnim by animateFloatAsState(
+      targetValue = progress,
       animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
     LinearProgressIndicator(
-      progress = progress,
+      progress = progressAnim,
       modifier = Modifier
         .fillMaxWidth()
         .height(20.dp)
