@@ -152,7 +152,10 @@ private fun Body(
   Column(modifier = modifier.padding(top = 36.dp)) {
     ProgressIndicator(
       progress = timerUiState.time / myTimer.time.toFloat(),
-      progressText = timerUiState.time.timeStr,
+      progressText = when (timerUiState) {
+        is BattleTimerUiState.Finish -> "YOU WIN!"
+        else -> timerUiState.time.timeStr
+      },
       label = when (timerUiState) {
         is BattleTimerUiState.Running -> timerUiState.encourageText
         else -> ""
@@ -168,7 +171,10 @@ private fun Body(
         timerUiState is BattleTimerUiState.Running && timerUiState.hasWin || timerUiState is BattleTimerUiState.Finish
       ProgressIndicator(
         progress = battleTimer.remainedTime / battleTime.toFloat(),
-        progressText = battleTimer.remainedTime.timeStr,
+        progressText = when (timerUiState) {
+          is BattleTimerUiState.Finish -> "YOU LOSE"
+          else -> battleTimer.remainedTime.timeStr
+        },
         label = when {
           displayWin -> "익명의 코뿔소님이 포기하셨습니다"
           else -> ""
