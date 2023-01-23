@@ -153,6 +153,10 @@ private fun Body(
     Timer(
       totalTime = myTimer.time,
       runningTime = timerUiState.time,
+      label = when (timerUiState) {
+        is BattleTimerUiState.Running -> timerUiState.encourageText
+        else -> ""
+      },
       modifier = Modifier
         .weight(1f)
         .padding(20.dp)
