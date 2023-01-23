@@ -28,12 +28,18 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   }
 
   private suspend fun startBattle() {
+    val winningTime = (10 * TimerInfo.SECONDS_UNIT until 50 * TimerInfo.SECONDS_UNIT).random()
+    val timeTick = 100L
+
     while (timerUiState.time > 0) {
-      delay(100)
+      delay(timeTick)
 
-      timerUiState = BattleTimerUiState.Running(timerUiState.time - 100)
+      val remainedTime = timerUiState.time - timeTick
 
-      battleTimer = battleTimer.copy(time = battleTimer.time - 100)
+      timerUiState =
+        BattleTimerUiState.Running(time = remainedTime, hasWin = remainedTime < winningTime)
+
+      battleTimer = battleTimer.copy(time = remainedTime)
     }
 
     timerUiState = BattleTimerUiState.Finish(timerUiState.time)
@@ -43,7 +49,7 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   fun start() {
     viewModelScope.launch {
       if (timerUiState is BattleTimerUiState.Idle || timerUiState is BattleTimerUiState.Finish) {
-        timerUiState = BattleTimerUiState.Loading(timerInfo.time, "")
+        timerUiState = BattleTimerUiState.Loading(timerInfo.time)
         battleTimer = battleTimer.copy(time = timerInfo.time)
 
         delay(2000)
@@ -91,9 +97,9 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
 sealed class BattleTimerUiState {
   data class Idle(override val time: Long) : BattleTimerUiState()
-  data class Loading(override val time: Long, val text: String) : BattleTimerUiState()
+  data class Loading(override val time: Long) : BattleTimerUiState()
   data class Ready(override val time: Long, val countdown: Int) : BattleTimerUiState()
-  data class Running(override val time: Long) : BattleTimerUiState()
+  data class Running(override val time: Long, val hasWin: Boolean = false) : BattleTimerUiState()
   data class Finish(override val time: Long) : BattleTimerUiState()
 
   abstract val time: Long
