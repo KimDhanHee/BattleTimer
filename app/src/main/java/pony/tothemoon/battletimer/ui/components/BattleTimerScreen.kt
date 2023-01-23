@@ -21,6 +21,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
@@ -61,18 +63,18 @@ fun BattleTimerScreen(
     val timerUiState = viewmodel.timerUiState
 
     var showDialog by remember { mutableStateOf(false) }
+    var showExit by remember { mutableStateOf(false) }
+
     if (showDialog) {
       ExitDialog(
         title = "먼저 마무리 하시겠어요?",
         positive = "그만 할래",
         negative = "더 해볼게",
-        onClickCancel = { showDialog = false },
         onClickOk = {
           showDialog = false
-
-          viewmodel.cancel()
-          cancel(navController)
-        }
+          showExit = true
+        },
+        onClickCancel = { showDialog = false },
       )
     }
 
@@ -114,6 +116,15 @@ fun BattleTimerScreen(
     if (timerUiState is BattleTimerUiState.Ready) {
       ReadyScreen(timerUiState.countdown)
     }
+
+    if (showExit) {
+      ExitScreen(onTimeout = {
+        showExit = false
+
+        viewmodel.cancel()
+        cancel(navController)
+      })
+    }
   }
 }
 
@@ -139,26 +150,40 @@ private fun Body(
   modifier: Modifier = Modifier,
 ) {
   Column(modifier = modifier.padding(top = 36.dp)) {
-    Timer(
-      title = "My Timer",
-      totalTime = myTimer.time,
-      runningTime = timerUiState.time,
+    ProgressIndicator(
+      progress = timerUiState.time / myTimer.time.toFloat(),
+      progressText = when (timerUiState) {
+        is BattleTimerUiState.Finish -> "YOU WIN!"
+        else -> timerUiState.time.timeStr
+      },
+      label = when (timerUiState) {
+        is BattleTimerUiState.Running -> timerUiState.encourageText
+        else -> ""
+      },
       modifier = Modifier
         .weight(1f)
-        .padding(horizontal = 20.dp)
+        .padding(20.dp)
     )
 
     if (timerUiState.displayBattle) {
       val battleTime by remember { mutableStateOf(battleTimer.time) }
-      Timer(
-        title = "Battle Timer",
-        totalTime = battleTime,
-        runningTime = battleTimer.time,
+      val displayWin =
+        timerUiState is BattleTimerUiState.Running && timerUiState.hasWin || timerUiState is BattleTimerUiState.Finish
+      ProgressIndicator(
+        progress = battleTimer.remainedTime / battleTime.toFloat(),
+        progressText = when (timerUiState) {
+          is BattleTimerUiState.Finish -> "YOU LOSE"
+          else -> battleTimer.remainedTime.timeStr
+        },
+        label = when {
+          displayWin -> "익명의 코뿔소님이 포기하셨습니다"
+          else -> ""
+        },
         modifier = Modifier
           .weight(1f)
           .background(color = Color.White)
           .padding(horizontal = 20.dp),
-        titleColor = Gray100,
+        textColor = Gray100,
         timerColor = Gray100
       )
     }
@@ -233,27 +258,20 @@ private fun TimerButton(text: String, color: Color, onClick: () -> Unit) {
 }
 
 @Composable
-private fun Timer(
-  title: String,
-  totalTime: Long,
-  runningTime: Long,
+private fun ProgressIndicator(
+  progress: Float,
+  progressText: String,
+  label: String = "",
   modifier: Modifier = Modifier,
-  titleColor: Color = Color.White,
+  textColor: Color = Color.White,
   timerColor: Color = Color.White,
 ) {
   Column(
-    modifier = modifier
-      .fillMaxWidth(),
+    modifier = modifier.fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    Spacer(modifier = Modifier.size(20.dp))
     Text(
-      text = title,
-      color = titleColor,
-      style = MaterialTheme.typography.labelMedium
-    )
-    Text(
-      text = runningTime.timeStr,
+      text = progressText,
       modifier = Modifier
         .padding(vertical = 16.dp)
         .fillMaxWidth(),
@@ -262,18 +280,24 @@ private fun Timer(
       style = MaterialTheme.typography.displayLarge
     )
 
-    val progress by animateFloatAsState(
-      targetValue = runningTime / totalTime.toFloat(),
+    val progressAnim by animateFloatAsState(
+      targetValue = progress,
       animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
     LinearProgressIndicator(
-      progress = progress,
+      progress = progressAnim,
       modifier = Modifier
         .fillMaxWidth()
         .height(20.dp)
         .clip(shape = RoundedCornerShape(6.dp)),
       color = timerColor,
       trackColor = White900
+    )
+    Spacer(modifier = Modifier.size(32.dp))
+    Text(
+      text = label,
+      color = textColor,
+      style = MaterialTheme.typography.labelMedium
     )
   }
 }
@@ -283,7 +307,7 @@ private fun LoadingScreen() {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.5f)),
+      .background(color = Color.Gray.copy(alpha = 0.6f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
@@ -299,13 +323,34 @@ private fun ReadyScreen(countdown: Int) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.5f)),
+      .background(color = Color.Gray.copy(alpha = 0.6f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
       text = "$countdown",
       color = Color.White,
       style = MaterialTheme.typography.displayLarge
+    )
+  }
+}
+
+@Composable
+private fun ExitScreen(onTimeout: () -> Unit) {
+  LaunchedEffect(Unit) {
+    delay(2000)
+    onTimeout()
+  }
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(color = Color.Gray.copy(alpha = 0.6f)),
+    contentAlignment = Alignment.Center
+  ) {
+    Text(
+      text = "다음에는 더 잘할거에요\n또 만나요☺️",
+      color = Color.White,
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.displaySmall
     )
   }
 }
