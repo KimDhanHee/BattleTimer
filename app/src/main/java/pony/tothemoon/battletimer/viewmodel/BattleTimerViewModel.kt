@@ -35,11 +35,14 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
       delay(timeTick)
 
       val remainedTime = timerUiState.time - timeTick
+      val hasWin = remainedTime < winningTime
 
       timerUiState =
-        BattleTimerUiState.Running(time = remainedTime, hasWin = remainedTime < winningTime)
+        BattleTimerUiState.Running(time = remainedTime, hasWin = hasWin)
 
-      battleTimer = battleTimer.copy(time = remainedTime)
+      if (!hasWin) {
+        battleTimer = battleTimer.copy(remainedTime = remainedTime)
+      }
     }
 
     timerUiState = BattleTimerUiState.Finish(timerUiState.time)

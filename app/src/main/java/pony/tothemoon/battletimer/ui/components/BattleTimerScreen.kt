@@ -151,25 +151,29 @@ private fun Body(
 ) {
   Column(modifier = modifier.padding(top = 36.dp)) {
     Timer(
-      title = "My Timer",
       totalTime = myTimer.time,
       runningTime = timerUiState.time,
       modifier = Modifier
         .weight(1f)
-        .padding(horizontal = 20.dp)
+        .padding(20.dp)
     )
 
     if (timerUiState.displayBattle) {
       val battleTime by remember { mutableStateOf(battleTimer.time) }
+      val displayWin =
+        timerUiState is BattleTimerUiState.Running && timerUiState.hasWin || timerUiState is BattleTimerUiState.Finish
       Timer(
-        title = "Battle Timer",
         totalTime = battleTime,
-        runningTime = battleTimer.time,
+        runningTime = battleTimer.remainedTime,
+        label = when {
+          displayWin -> "익명의 코뿔소님이 포기하셨습니다"
+          else -> ""
+        },
         modifier = Modifier
           .weight(1f)
           .background(color = Color.White)
           .padding(horizontal = 20.dp),
-        titleColor = Gray100,
+        textColor = Gray100,
         timerColor = Gray100
       )
     }
@@ -245,24 +249,17 @@ private fun TimerButton(text: String, color: Color, onClick: () -> Unit) {
 
 @Composable
 private fun Timer(
-  title: String,
   totalTime: Long,
   runningTime: Long,
+  label: String = "",
   modifier: Modifier = Modifier,
-  titleColor: Color = Color.White,
+  textColor: Color = Color.White,
   timerColor: Color = Color.White,
 ) {
   Column(
-    modifier = modifier
-      .fillMaxWidth(),
+    modifier = modifier.fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    Spacer(modifier = Modifier.size(20.dp))
-    Text(
-      text = title,
-      color = titleColor,
-      style = MaterialTheme.typography.labelMedium
-    )
     Text(
       text = runningTime.timeStr,
       modifier = Modifier
@@ -285,6 +282,12 @@ private fun Timer(
         .clip(shape = RoundedCornerShape(6.dp)),
       color = timerColor,
       trackColor = White900
+    )
+    Spacer(modifier = Modifier.size(32.dp))
+    Text(
+      text = label,
+      color = textColor,
+      style = MaterialTheme.typography.labelMedium
     )
   }
 }
