@@ -31,8 +31,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.ui.theme.Gray100
@@ -47,6 +49,14 @@ fun BattleTimerScreen(
   navController: NavHostController,
   viewmodel: BattleTimerViewModel = viewModel(factory = BattleTimerViewModelFactory(timerInfo)),
 ) {
+  onLifecycleEvent { event ->
+    when (event) {
+      Lifecycle.Event.ON_CREATE -> viewmodel.clear()
+      Lifecycle.Event.ON_PAUSE -> viewmodel.save()
+      else -> Unit
+    }
+  }
+
   Box(modifier = Modifier.fillMaxSize()) {
     val timerUiState = viewmodel.timerUiState
 
@@ -59,6 +69,8 @@ fun BattleTimerScreen(
         onClickCancel = { showDialog = false },
         onClickOk = {
           showDialog = false
+
+          viewmodel.cancel()
           cancel(navController)
         }
       )
