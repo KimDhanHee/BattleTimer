@@ -6,28 +6,39 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pony.tothemoon.battletimer.datastore.ActiveTimer
+import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.model.TimerInfo
 
 class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   var battleTimer by mutableStateOf(TimerInfo(title = "익명의 코뿔소", time = timerInfo.remainedTime))
     private set
 
+  var timerUiState: BattleTimerUiState by mutableStateOf(BattleTimerUiState.Idle(timerInfo.remainedTime))
+    private set
+
+  init {
+    if (timerInfo.state == TimerInfo.State.RUNNING) {
+      viewModelScope.launch { startBattle() }
+    }
+  }
+
   private suspend fun startBattle() {
     while (timerUiState.time > 0) {
-      delay(TimerInfo.SECONDS_UNIT)
+      delay(100)
 
-      timerUiState = BattleTimerUiState.Running(timerUiState.time - TimerInfo.SECONDS_UNIT)
+      timerUiState = BattleTimerUiState.Running(timerUiState.time - 100)
 
-      battleTimer = battleTimer.copy(time = battleTimer.time - TimerInfo.SECONDS_UNIT)
+      battleTimer = battleTimer.copy(time = battleTimer.time - 100)
     }
 
     timerUiState = BattleTimerUiState.Finish(timerUiState.time)
+    clear()
   }
-
-  var timerUiState: BattleTimerUiState by mutableStateOf(BattleTimerUiState.Idle(timerInfo.time))
-    private set
 
   fun start() {
     viewModelScope.launch {
@@ -44,6 +55,36 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
         startBattle()
       }
+    }
+  }
+
+  fun cancel() {
+    timerUiState = BattleTimerUiState.Idle(timerInfo.time)
+    clear()
+  }
+
+  fun save() {
+    if (timerUiState is BattleTimerUiState.Running) {
+      CoroutineScope(Dispatchers.IO).launch {
+        TimerDataStore.save(
+          ActiveTimer(
+            isBattle = true,
+            _timerInfo = timerInfo.copy(
+              remainedTime = timerUiState.time,
+              state = when (timerUiState) {
+                is BattleTimerUiState.Running -> TimerInfo.State.RUNNING
+                else -> TimerInfo.State.IDLE
+              }
+            )
+          )
+        )
+      }
+    }
+  }
+
+  fun clear() {
+    CoroutineScope(Dispatchers.IO).launch {
+      TimerDataStore.clear()
     }
   }
 }
