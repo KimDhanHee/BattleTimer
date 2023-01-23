@@ -21,6 +21,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
@@ -61,18 +63,18 @@ fun BattleTimerScreen(
     val timerUiState = viewmodel.timerUiState
 
     var showDialog by remember { mutableStateOf(false) }
+    var showExit by remember { mutableStateOf(false) }
+
     if (showDialog) {
       ExitDialog(
         title = "먼저 마무리 하시겠어요?",
         positive = "그만 할래",
         negative = "더 해볼게",
-        onClickCancel = { showDialog = false },
         onClickOk = {
           showDialog = false
-
-          viewmodel.cancel()
-          cancel(navController)
-        }
+          showExit = true
+        },
+        onClickCancel = { showDialog = false },
       )
     }
 
@@ -113,6 +115,15 @@ fun BattleTimerScreen(
 
     if (timerUiState is BattleTimerUiState.Ready) {
       ReadyScreen(timerUiState.countdown)
+    }
+
+    if (showExit) {
+      ExitScreen(onTimeout = {
+        showExit = false
+
+        viewmodel.cancel()
+        cancel(navController)
+      })
     }
   }
 }
@@ -283,7 +294,7 @@ private fun LoadingScreen() {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.5f)),
+      .background(color = Color.Gray.copy(alpha = 0.6f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
@@ -299,13 +310,34 @@ private fun ReadyScreen(countdown: Int) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.5f)),
+      .background(color = Color.Gray.copy(alpha = 0.6f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
       text = "$countdown",
       color = Color.White,
       style = MaterialTheme.typography.displayLarge
+    )
+  }
+}
+
+@Composable
+private fun ExitScreen(onTimeout: () -> Unit) {
+  LaunchedEffect(Unit) {
+    delay(2000)
+    onTimeout()
+  }
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(color = Color.Gray.copy(alpha = 0.6f)),
+    contentAlignment = Alignment.Center
+  ) {
+    Text(
+      text = "다음에는 더 잘할거에요\n또 만나요☺️",
+      color = Color.White,
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.displaySmall
     )
   }
 }
