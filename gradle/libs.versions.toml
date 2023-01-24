@@ -1,6 +1,7 @@
 [versions]
 kotlin = "1.7.20"
 kotlinx-serialization = "1.4.1"
+kotlinx-coroutine = "1.6.4"
 androidGradle = "7.3.1"
 androidx-core = "1.9.0"
 androidx-lifecycle = "2.5.1"
@@ -11,6 +12,8 @@ compose-viewmodel = "2.5.1"
 compose-navigation = "2.5.3"
 
 datastore = "1.0.0"
+
+exoplayer = "1.0.0-beta03"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -34,8 +37,11 @@ compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose",
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
 
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
+kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutine"}
 
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoplayer" }
 
 [bundles]
 compose = [ "compose-material3", "compose-preview", "compose-icons-core", "compose-icons-extended" ]
