@@ -1,6 +1,7 @@
 [versions]
 kotlin = "1.7.20"
 kotlinx-serialization = "1.4.1"
+kotlinx-coroutine = "1.6.4"
 androidGradle = "7.3.1"
 androidx-core = "1.9.0"
 androidx-lifecycle = "2.5.1"
@@ -12,15 +13,18 @@ compose-navigation = "2.5.3"
 
 datastore = "1.0.0"
 
+exoplayer = "1.0.0-beta03"
+
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "androidx-lifecycle" }
 
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
@@ -30,12 +34,15 @@ compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose-icons-core = { module = "androidx.compose.material:material-icons-core" }
 compose-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
-compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "compose-viewmodel"}
+compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "compose-viewmodel" }
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
 
-kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization"}
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutine" }
 
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
+exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoplayer" }
+
 [bundles]
-compose = [ "compose-material3", "compose-preview", "compose-icons-core", "compose-icons-extended" ]
+compose = ["compose-material3", "compose-preview", "compose-icons-core", "compose-icons-extended"]

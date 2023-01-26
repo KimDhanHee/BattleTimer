@@ -1,5 +1,6 @@
 package pony.tothemoon.battletimer.ui.components
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -37,7 +39,9 @@ import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
+import pony.tothemoon.battletimer.service.TimerService
 import pony.tothemoon.battletimer.ui.theme.Gray100
+import pony.tothemoon.battletimer.utils.AlarmUtils
 import pony.tothemoon.battletimer.viewmodel.SingleTimerUiState
 import pony.tothemoon.battletimer.viewmodel.SingleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.SingleTimerViewModelFactory
@@ -48,6 +52,8 @@ fun SingleTimerScreen(
   navController: NavHostController,
   viewmodel: SingleTimerViewModel = viewModel(factory = SingleTimerViewModelFactory(timerInfo)),
 ) {
+  val context = LocalContext.current
+
   onLifecycleEvent { event ->
     when (event) {
       Lifecycle.Event.ON_CREATE -> viewmodel.clear()
@@ -65,6 +71,7 @@ fun SingleTimerScreen(
       onClickOk = {
         showDialog = false
 
+        AlarmUtils.cancelAlarm(context, timerInfo.id)
         viewmodel.dismiss()
         cancel(navController)
       },
@@ -80,7 +87,7 @@ fun SingleTimerScreen(
     when {
       timerUiState.isActive -> showDialog = true
       timerUiState is SingleTimerUiState.Idle -> cancel(navController)
-      timerUiState is SingleTimerUiState.Finish -> dismiss(navController)
+      timerUiState is SingleTimerUiState.Finish -> reset(navController)
     }
   }
 
@@ -95,9 +102,18 @@ fun SingleTimerScreen(
     Body(
       timerInfo = timerInfo,
       timerUiState = timerUiState,
-      onClickStart = { viewmodel.start() },
-      onClickPause = { viewmodel.pause() },
-      onClickDismiss = { viewmodel.dismiss() },
+      onClickStart = {
+        viewmodel.start()
+        AlarmUtils.setAlarm(context, timerInfo.copy(remainedTime = timerUiState.time))
+      },
+      onClickPause = {
+        viewmodel.pause()
+        AlarmUtils.cancelAlarm(context, timerInfo.id)
+      },
+      onClickDismiss = {
+        viewmodel.dismiss()
+        context.stopService(Intent(context, TimerService::class.java))
+      },
       modifier = Modifier.weight(1f)
     )
     Spacer(modifier = Modifier.size(100.dp))
@@ -111,7 +127,7 @@ private fun cancel(navController: NavHostController) {
   navController.navigateUp()
 }
 
-private fun dismiss(navController: NavHostController) {
+private fun reset(navController: NavHostController) {
   navController.previousBackStackEntry
     ?.savedStateHandle
     ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)

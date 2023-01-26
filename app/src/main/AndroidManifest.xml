@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools">
   
+  <uses-permission
+    android:name="android.permission.SCHEDULE_EXACT_ALARM"
+    android:maxSdkVersion="32" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  
   <application
     android:name=".BattleTimerApp"
     android:allowBackup="true"
@@ -13,6 +22,19 @@
     android:supportsRtl="true"
     android:theme="@style/Theme.BattleTimer"
     tools:targetApi="31">
+    <service
+      android:name=".service.TimerService"
+      android:enabled="true"
+      android:exported="false"></service>
+    
+    <receiver
+      android:name=".receiver.TimerReceiver"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="${applicationId}.TIME_OUT" />
+      </intent-filter>
+    </receiver>
+    
     <activity
       android:name=".MainActivity"
       android:exported="true"

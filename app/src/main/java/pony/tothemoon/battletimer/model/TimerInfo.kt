@@ -1,19 +1,22 @@
 package pony.tothemoon.battletimer.model
 
 import android.net.Uri
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.abs
 
+@Parcelize
 @Serializable
 data class TimerInfo(
-  val id: Int = 0,
+  val id: Int = -1,
   val title: String = "",
   val time: Long = 0L,
   val remainedTime: Long = time,
   val state: State = State.IDLE,
-) {
+) : Parcelable {
   override fun toString(): String = Uri.encode(Json.encodeToString(this))
 
   companion object {
