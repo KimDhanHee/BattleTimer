@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlinx-serialization'
     id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 def version_major = 1
@@ -80,4 +82,7 @@ dependencies {
     implementation(libs.kotlinx.serialization)
 
     implementation(libs.datastore)
+
+    implementation platform(libs.firebase)
+    implementation(libs.bundles.firebase)
 }
