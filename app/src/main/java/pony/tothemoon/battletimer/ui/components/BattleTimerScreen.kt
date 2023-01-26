@@ -1,5 +1,6 @@
 package pony.tothemoon.battletimer.ui.components
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -25,11 +26,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -39,8 +42,10 @@ import kotlinx.coroutines.delay
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
+import pony.tothemoon.battletimer.service.TimerService
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.ui.theme.White900
+import pony.tothemoon.battletimer.utils.AlarmUtils
 import pony.tothemoon.battletimer.viewmodel.BattleTimerUiState
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModelFactory
@@ -65,6 +70,8 @@ fun BattleTimerScreen(
     var showDialog by remember { mutableStateOf(false) }
     var showExit by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
     if (showDialog) {
       ExitDialog(
         title = "먼저 마무리 하시겠어요?",
@@ -73,6 +80,7 @@ fun BattleTimerScreen(
         onClickOk = {
           showDialog = false
           showExit = true
+          AlarmUtils.cancelAlarm(context, timerInfo.id)
         },
         onClickCancel = { showDialog = false },
       )
@@ -81,7 +89,7 @@ fun BattleTimerScreen(
     val onBack = {
       when (timerUiState) {
         is BattleTimerUiState.Idle -> cancel(navController)
-        is BattleTimerUiState.Finish -> dismiss(navController)
+        is BattleTimerUiState.Finish -> reset(navController)
         else -> showDialog = true
       }
     }
@@ -103,9 +111,19 @@ fun BattleTimerScreen(
       )
       Footer(
         timerUiState,
-        onClickStart = { viewmodel.start() },
+        onClickStart = {
+          viewmodel.start()
+          context.stopService(Intent(context, TimerService::class.java))
+          AlarmUtils.setAlarm(
+            context,
+            timerInfo.copy(remainedTime = timerInfo.remainedTime + 5 * TimerInfo.SECONDS_UNIT)
+          )
+        },
         onCancel = { onBack() },
-        onFinish = { dismiss(navController) },
+        onFinish = {
+          reset(navController)
+          context.stopService(Intent(context, TimerService::class.java))
+        },
       )
     }
 
@@ -135,7 +153,7 @@ private fun cancel(navController: NavHostController) {
   navController.navigateUp()
 }
 
-private fun dismiss(navController: NavHostController) {
+private fun reset(navController: NavHostController) {
   navController.previousBackStackEntry
     ?.savedStateHandle
     ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)
