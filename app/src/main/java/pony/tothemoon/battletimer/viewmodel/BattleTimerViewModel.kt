@@ -1,5 +1,6 @@
 package pony.tothemoon.battletimer.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,12 +11,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.model.TimerInfo
+import pony.tothemoon.battletimer.utils.AndroidUtils
 
 class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
-  var battleTimer by mutableStateOf(TimerInfo(title = "익명의 코뿔소", time = timerInfo.remainedTime))
+  var battleTimer by mutableStateOf(
+    TimerInfo(
+      title = AndroidUtils.stringArray(R.array.random_users).random(),
+      time = timerInfo.remainedTime
+    )
+  )
     private set
 
   var timerUiState: BattleTimerUiState by mutableStateOf(BattleTimerUiState.Idle(timerInfo.remainedTime))
@@ -30,12 +38,21 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   private suspend fun startBattle() {
     val winningTime = (10 * TimerInfo.SECONDS_UNIT until 50 * TimerInfo.SECONDS_UNIT).random()
     val timeTick = 100L
-    val encourageTexts = arrayOf(
-      "끝까지만 하면 이기는거야",
-      "거의 다 왔어요! 끝까지 해내세요",
-      "힘내세요! 할 수 있어요!"
+    val encourageTextResArray = arrayOf(
+      R.string.battle_timer_encourage_1,
+      R.string.battle_timer_encourage_2,
+      R.string.battle_timer_encourage_3,
+      R.string.battle_timer_encourage_4,
+      R.string.battle_timer_encourage_5,
+      R.string.battle_timer_encourage_6,
+      R.string.battle_timer_encourage_7,
+      R.string.battle_timer_encourage_8,
+      R.string.battle_timer_encourage_9,
+      R.string.battle_timer_encourage_10,
+      R.string.battle_timer_encourage_11,
+      R.string.battle_timer_encourage_12,
     )
-    var encourageText: String = encourageTexts.random()
+    var encourageTextRes: Int = encourageTextResArray.random()
 
     while (timerUiState.time > 0) {
       delay(timeTick)
@@ -45,13 +62,13 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
       val changeEncourage = (remainedTime / timeTick % timeTick) == 0L
 
       if (changeEncourage) {
-        encourageText = encourageTexts.random()
+        encourageTextRes = encourageTextResArray.random()
       }
 
       timerUiState = BattleTimerUiState.Running(
         time = remainedTime,
         hasWin = hasWin,
-        encourageText = encourageText
+        textRes = encourageTextRes
       )
 
       if (!hasWin) {
@@ -66,18 +83,33 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   fun start() {
     viewModelScope.launch {
       if (timerUiState is BattleTimerUiState.Idle || timerUiState is BattleTimerUiState.Finish) {
-        timerUiState = BattleTimerUiState.Loading(timerInfo.time)
+        loading()
+
         battleTimer = battleTimer.copy(time = timerInfo.time)
 
-        delay(2000)
-
-        repeat(3) {
-          delay(TimerInfo.SECONDS_UNIT)
-          timerUiState = BattleTimerUiState.Ready(timerUiState.time, 3 - it)
-        }
+        countdown()
 
         startBattle()
       }
+    }
+  }
+
+  private suspend fun loading() {
+    val loadingTextRes = arrayOf(
+      R.string.battle_timer_loading_search,
+      R.string.battle_timer_loading_enter,
+      R.string.battle_timer_loading_end
+    )
+    loadingTextRes.forEach { textRes ->
+      timerUiState = BattleTimerUiState.Loading(timerInfo.time, textRes)
+      delay(2000)
+    }
+  }
+
+  private suspend fun countdown() {
+    repeat(3) {
+      delay(TimerInfo.SECONDS_UNIT)
+      timerUiState = BattleTimerUiState.Ready(timerUiState.time, 3 - it)
     }
   }
 
@@ -114,12 +146,12 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
 sealed class BattleTimerUiState {
   data class Idle(override val time: Long) : BattleTimerUiState()
-  data class Loading(override val time: Long) : BattleTimerUiState()
+  data class Loading(override val time: Long, @StringRes val textRes: Int) : BattleTimerUiState()
   data class Ready(override val time: Long, val countdown: Int) : BattleTimerUiState()
   data class Running(
     override val time: Long,
     val hasWin: Boolean = false,
-    val encourageText: String,
+    @StringRes val textRes: Int,
   ) : BattleTimerUiState()
 
   data class Finish(override val time: Long) : BattleTimerUiState()

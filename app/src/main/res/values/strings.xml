@@ -1,3 +1,143 @@
 <resources>
   <string name="app_name">Battle Timer</string>
+  <string name="minute_3_timer">💡 3 minute timer</string>
+  <string name="minute_5_timer">💡 5 minute timer</string>
+  <string name="minute_10_timer">💡 10 minute timer</string>
+  <string name="minute_15_timer">🍅 15 minute timer</string>
+  <string name="minute_25_timer">🍅 25 minute timer</string>
+  <string name="minute_50_timer">🎯 50 minute timer</string>
+  <string name="timer_list_battle_timer_title">%s He\'s concentrating. 🔥</string>
+  <string name="battle_timer_bottom_description">Let\'s start off lightly.</string>
+  <string name="battle_timer_button_start">Start battle</string>
+  <string name="battle_timer_button_giveup">Giving up</string>
+  <string name="battle_timer_button_one_more">One more time</string>
+  <string name="battle_timer_button_finish">Finish</string>
+  <string name="battle_timer_loading_search">🔍\nLooking for someone.</string>
+  <string name="battle_timer_loading_enter">👋\n%s has entered.</string>
+  <string name="battle_timer_loading_end">🤜 🤛\nBattle with %s will begin.</string>
+  <string name="battle_timer_exit_title">Would you like to stop here?</string>
+  <string name="battle_timer_exit_positive">next time</string>
+  <string name="battle_timer_exit_negative">30 more seconds</string>
+  <string name="battle_timer_encourage_1">Focus! Focus!</string>
+  <string name="battle_timer_encourage_2">Are you distracted? Let\'s focus for 10 seconds</string>
+  <string name="battle_timer_encourage_3">Don\'t look at the screen and focus again</string>
+  <string name="battle_timer_encourage_4">It\'s great to do something you don\'t want to do</string>
+  <string name="battle_timer_encourage_5">If you do it until the end, you win</string>
+  <string name="battle_timer_encourage_6">Cheer up! You can do it!</string>
+  <string name="battle_timer_encourage_7">Don\'t take it seriously</string>
+  <string name="battle_timer_encourage_8">What are you thinking? Just Do It -  Yuna Kim</string>
+  <string name="battle_timer_encourage_9">Success follows when you do something you don\'t want to do</string>
+  <string name="battle_timer_encourage_10">Every achievement begins with controlling the mind you don\'t want to do</string>
+  <string name="battle_timer_encourage_11">Step by step one goes a long way</string>
+  <string name="battle_timer_encourage_12">Small drops of water penetrate the rock!</string>
+  <string name="battle_timer_exit_encourage">You\'ll do better next time.\nSee you again ☺️</string>
+  <string name="battle_timer_good_job">Good job! 🎉</string>
+  <string name="battle_timer_other_left">%s has left</string>
+  <string name="battle_timer_win" translatable="false">YOU WIN! 🏆</string>
+  <string name="battle_timer_lose" translatable="false">YOU LOSE 😞</string>
+  <string name="single_timer_exit_title">Would you like to stop here?</string>
+  <string name="single_timer_exit_positive">Yes</string>
+  <string name="single_timer_exit_negative">No</string>
+  <string-array name="random_users">
+    <item>BlueRaccoon</item>
+    <item>EnchantedBeam</item>
+    <item>IridianBorder</item>
+    <item>RisingSkylar</item>
+    <item>HadleyDeadblood</item>
+    <item>ComelyTatum</item>
+    <item>ErinClaw</item>
+    <item>DevanDeadskull</item>
+    <item>MicroParker</item>
+    <item>WesternCody</item>
+    <item>BlueFlight</item>
+    <item>DallasSparks</item>
+    <item>RileyCurrant</item>
+    <item>LindyGoblet</item>
+    <item>CuteHaley</item>
+    <item>VividTragedy</item>
+    <item>BloodyRaccoon</item>
+    <item>BlairIcecrystals</item>
+    <item>MuskyTaylor</item>
+    <item>ObscureDangerous</item>
+    <item>IcyTeagan</item>
+    <item>WesternWalnut</item>
+    <item>LivingHarley</item>
+    <item>HollowLime</item>
+    <item>HollowChild</item>
+    <item>DawnSnow</item>
+    <item>JourneyThermonuclear</item>
+    <item>MiniatureRiley</item>
+    <item>MurkFruitpip</item>
+    <item>DarkWhitney</item>
+    <item>SkullWynn</item>
+    <item>WaverleyGriefstruck</item>
+    <item>LectricBrennan</item>
+    <item>WhiteDarcy</item>
+    <item>LivingMorgan</item>
+    <item>MuskyAydan</item>
+    <item>RileyLennon</item>
+    <item>BraveMorgan</item>
+    <item>PlayfulFog</item>
+    <item>DynamicKinsey</item>
+    <item>JourneyBell</item>
+    <item>LeeBarley</item>
+    <item>AzureSheridan</item>
+    <item>SidneyQuail</item>
+    <item>WonderParis</item>
+    <item>ParkerDevastation</item>
+    <item>SunLee</item>
+    <item>SingingBobcat</item>
+    <item>StolenRider</item>
+    <item>AzureBud</item>
+    <item>RubyDevon</item>
+    <item>DallasSaturn</item>
+    <item>EnergyHarrison</item>
+    <item>ComelyDieselpunk</item>
+    <item>PiperThaw</item>
+    <item>TatumThorn</item>
+    <item>IndianaGoosebumps</item>
+    <item>RisingShadows</item>
+    <item>DuskyMemphis</item>
+    <item>WickedMarley</item>
+    <item>SkullDax</item>
+    <item>StoneMarley</item>
+    <item>HarperBrainiac</item>
+    <item>MaceyChimp</item>
+    <item>FlaxenOx</item>
+    <item>BrennanBats</item>
+    <item>HadleyHorse</item>
+    <item>SkinnyFirebrand</item>
+    <item>QuinnMentalist</item>
+    <item>LustrousLemon</item>
+    <item>PestilentDarkside</item>
+    <item>MarianTrouble</item>
+    <item>SidneyNihilism</item>
+    <item>NightDax</item>
+    <item>SmartDisaster</item>
+    <item>DeathlyFireborn</item>
+    <item>WhitleyRoseblood</item>
+    <item>CaseyPalace</item>
+    <item>SheridanKangaroo</item>
+    <item>LucentRazorblades</item>
+    <item>ArdenWolfsbane</item>
+    <item>JourneySkull</item>
+    <item>DeathlyAddison</item>
+    <item>ArtfulAspen</item>
+    <item>BrazenRiley</item>
+    <item>MagneticUnderthesea</item>
+    <item>GloomPeacock</item>
+    <item>CruelCyberpunk</item>
+    <item>NorthernDax</item>
+    <item>WineGoosebumps</item>
+    <item>ShadowDelaney</item>
+    <item>BoldSolstice</item>
+    <item>GlennLightningstrike</item>
+    <item>FlourishingDusty</item>
+    <item>PlayfulDax</item>
+    <item>RubyDemonic</item>
+    <item>RegalMists</item>
+    <item>KennedyForbidden</item>
+    <item>DivineCremation</item>
+    <item>CameronSweetling</item>
+  </string-array>
 </resources>

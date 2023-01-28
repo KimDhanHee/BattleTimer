@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,8 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,10 +59,10 @@ fun TimerListScreen(
   ) {
     Title(modifier = Modifier.padding(top = 24.dp, bottom = 30.dp))
 
-    val timerList by timerListViewModel.timerListFlow.collectAsState()
+    val timerList = timerListViewModel.presetTimers
     TimerList(
       battleTimer = timerListViewModel.battleTimer,
-      timerList = timerList,
+      timerArray = timerList,
       onClickTimer = onClickTimer,
       onClickBattle = onClickBattle,
     )
@@ -83,19 +82,20 @@ private fun Title(modifier: Modifier = Modifier) {
 private fun TimerList(
   battleTimer: TimerInfo,
   modifier: Modifier = Modifier,
-  timerList: List<TimerInfo> = emptyList(),
+  timerArray: Array<TimerInfo> = emptyArray(),
   onClickTimer: (TimerInfo) -> Unit = {},
   onClickBattle: (TimerInfo) -> Unit = {},
 ) {
   LazyColumn(
     modifier = modifier,
-    verticalArrangement = Arrangement.spacedBy(8.dp)
+    verticalArrangement = Arrangement.spacedBy(8.dp),
+    contentPadding = PaddingValues(bottom = 20.dp)
   ) {
     item {
       BattleTimer(battleTimer)
     }
 
-    items(timerList) { timerInfo ->
+    items(timerArray) { timerInfo ->
       TimerListItem(
         timerInfo,
         onClickTimer = onClickTimer,

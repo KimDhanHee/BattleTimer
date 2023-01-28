@@ -26,19 +26,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
+import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
@@ -74,9 +76,9 @@ fun BattleTimerScreen(
 
     if (showDialog) {
       ExitDialog(
-        title = "먼저 마무리 하시겠어요?",
-        positive = "그만 할래",
-        negative = "더 해볼게",
+        title = stringResource(id = R.string.battle_timer_exit_title),
+        positive = stringResource(id = R.string.battle_timer_exit_positive),
+        negative = stringResource(id = R.string.battle_timer_exit_negative),
         onClickOk = {
           showDialog = false
           showExit = true
@@ -116,7 +118,7 @@ fun BattleTimerScreen(
           context.stopService(Intent(context, TimerService::class.java))
           AlarmUtils.setAlarm(
             context,
-            timerInfo.copy(remainedTime = timerInfo.remainedTime + 5 * TimerInfo.SECONDS_UNIT)
+            timerInfo.copy(remainedTime = timerInfo.remainedTime + 9 * TimerInfo.SECONDS_UNIT)
           )
         },
         onCancel = { onBack() },
@@ -128,7 +130,7 @@ fun BattleTimerScreen(
     }
 
     if (timerUiState is BattleTimerUiState.Loading) {
-      LoadingScreen()
+      LoadingScreen(stringResource(id = timerUiState.textRes, viewmodel.battleTimer.title))
     }
 
     if (timerUiState is BattleTimerUiState.Ready) {
@@ -167,15 +169,16 @@ private fun Body(
   timerUiState: BattleTimerUiState,
   modifier: Modifier = Modifier,
 ) {
-  Column(modifier = modifier.padding(top = 36.dp)) {
+  Column(modifier = modifier) {
     ProgressIndicator(
       progress = timerUiState.time / myTimer.time.toFloat(),
       progressText = when (timerUiState) {
-        is BattleTimerUiState.Finish -> "YOU WIN!"
+        is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_win)
         else -> timerUiState.time.timeStr
       },
       label = when (timerUiState) {
-        is BattleTimerUiState.Running -> timerUiState.encourageText
+        is BattleTimerUiState.Running -> stringResource(id = timerUiState.textRes)
+        is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_good_job)
         else -> ""
       },
       modifier = Modifier
@@ -190,11 +193,11 @@ private fun Body(
       ProgressIndicator(
         progress = battleTimer.remainedTime / battleTime.toFloat(),
         progressText = when (timerUiState) {
-          is BattleTimerUiState.Finish -> "YOU LOSE"
+          is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_lose)
           else -> battleTimer.remainedTime.timeStr
         },
         label = when {
-          displayWin -> "익명의 코뿔소님이 포기하셨습니다"
+          displayWin -> stringResource(id = R.string.battle_timer_other_left, battleTimer.title)
           else -> ""
         },
         modifier = Modifier
@@ -219,11 +222,20 @@ private fun Footer(
     battleTimerUiState.displayBattle -> Color.White
     else -> Gray100
   }
-  val buttonColor = when {
+  val textColor = when {
     battleTimerUiState.displayBattle -> Gray100
     else -> Color.White
   }
 
+  if (battleTimerUiState is BattleTimerUiState.Idle) {
+    Text(
+      modifier = Modifier.fillMaxWidth(),
+      text = stringResource(id = R.string.battle_timer_bottom_description),
+      color = textColor,
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.labelMedium,
+    )
+  }
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -234,26 +246,26 @@ private fun Footer(
     when (battleTimerUiState) {
       is BattleTimerUiState.Idle ->
         TimerButton(
-          text = "배틀 시작하기",
-          color = buttonColor,
+          text = stringResource(id = R.string.battle_timer_button_start),
+          color = textColor,
           onClick = onClickStart
         )
       is BattleTimerUiState.Loading, is BattleTimerUiState.Ready, is BattleTimerUiState.Running ->
         TimerButton(
-          text = "포기하기",
-          color = buttonColor,
+          text = stringResource(id = R.string.battle_timer_button_giveup),
+          color = textColor,
           onClick = onCancel
         )
       is BattleTimerUiState.Finish -> {
         TimerButton(
-          text = "한번 더 하기",
-          color = buttonColor,
+          text = stringResource(id = R.string.battle_timer_button_one_more),
+          color = textColor,
           onClick = onClickStart
         )
         Spacer(modifier = Modifier.size(20.dp))
         TimerButton(
-          text = "종료하기",
-          color = buttonColor,
+          text = stringResource(id = R.string.battle_timer_button_finish),
+          color = textColor,
           onClick = onFinish
         )
       }
@@ -291,7 +303,7 @@ private fun ProgressIndicator(
     Text(
       text = progressText,
       modifier = Modifier
-        .padding(vertical = 16.dp)
+        .padding(vertical = 32.dp)
         .fillMaxWidth(),
       color = timerColor,
       textAlign = TextAlign.Center,
@@ -311,26 +323,29 @@ private fun ProgressIndicator(
       color = timerColor,
       trackColor = White900
     )
-    Spacer(modifier = Modifier.size(32.dp))
+    Spacer(modifier = Modifier.size(48.dp))
     Text(
       text = label,
       color = textColor,
-      style = MaterialTheme.typography.labelMedium
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.labelMedium,
     )
   }
 }
 
 @Composable
-private fun LoadingScreen() {
+private fun LoadingScreen(text: String) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.6f)),
+      .background(color = Color.Gray.copy(alpha = 0.8f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
-      text = "상대방 탐색 중 입니다...",
+      text = text,
       color = Color.White,
+      textAlign = TextAlign.Center,
+      lineHeight = 42.sp,
       style = MaterialTheme.typography.displaySmall
     )
   }
@@ -341,7 +356,7 @@ private fun ReadyScreen(countdown: Int) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.6f)),
+      .background(color = Color.Gray.copy(alpha = 0.8f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
@@ -361,11 +376,11 @@ private fun ExitScreen(onTimeout: () -> Unit) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.6f)),
+      .background(color = Color.Gray.copy(alpha = 0.8f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
-      text = "다음에는 더 잘할거에요\n또 만나요☺️",
+      text = stringResource(id = R.string.battle_timer_exit_encourage),
       color = Color.White,
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.displaySmall
