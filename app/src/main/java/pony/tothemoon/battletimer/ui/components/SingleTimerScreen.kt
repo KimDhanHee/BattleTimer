@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -65,9 +66,9 @@ fun SingleTimerScreen(
   var showDialog by remember { mutableStateOf(false) }
   if (showDialog) {
     ExitDialog(
-      title = "종료하시겠습니까?",
-      positive = "네",
-      negative = "아니오",
+      title = stringResource(id = R.string.single_timer_exit_title),
+      positive = stringResource(id = R.string.single_timer_exit_positive),
+      negative = stringResource(id = R.string.single_timer_exit_negative),
       onClickOk = {
         showDialog = false
 

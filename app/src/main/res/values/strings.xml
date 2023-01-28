@@ -35,4 +35,7 @@
   <string name="battle_timer_other_left">%s has left</string>
   <string name="battle_timer_win" translatable="false">YOU WIN! 🏆</string>
   <string name="battle_timer_lose" translatable="false">YOU LOSE 😞</string>
+  <string name="single_timer_exit_title">Would you like to stop here?</string>
+  <string name="single_timer_exit_positive">Yes</string>
+  <string name="single_timer_exit_negative">No</string>
 </resources>
