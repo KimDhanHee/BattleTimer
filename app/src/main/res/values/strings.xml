@@ -31,6 +31,8 @@
   <string name="battle_timer_encourage_11">Step by step one goes a long way.</string>
   <string name="battle_timer_encourage_12">Small drops of water penetrate the rock!</string>
   <string name="battle_timer_exit_encourage">You\'ll do better next time.\nSee you again ☺️</string>
+  <string name="battle_timer_good_job">Good job! 🎉</string>
+  <string name="battle_timer_other_left">%s has left</string>
   <string name="battle_timer_win" translatable="false">YOU WIN! 🏆</string>
   <string name="battle_timer_lose" translatable="false">YOU LOSE 😞</string>
 </resources>

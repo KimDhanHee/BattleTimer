@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -177,6 +178,7 @@ private fun Body(
       },
       label = when (timerUiState) {
         is BattleTimerUiState.Running -> stringResource(id = timerUiState.textRes)
+        is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_good_job)
         else -> ""
       },
       modifier = Modifier
@@ -195,7 +197,7 @@ private fun Body(
           else -> battleTimer.remainedTime.timeStr
         },
         label = when {
-          displayWin -> "익명의 코뿔소님이 포기하셨습니다"
+          displayWin -> stringResource(id = R.string.battle_timer_other_left, battleTimer.title)
           else -> ""
         },
         modifier = Modifier
@@ -343,6 +345,7 @@ private fun LoadingScreen(text: String) {
       text = text,
       color = Color.White,
       textAlign = TextAlign.Center,
+      lineHeight = 42.sp,
       style = MaterialTheme.typography.displaySmall
     )
   }
