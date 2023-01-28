@@ -1,3 +1,9 @@
 <resources>
   <string name="app_name">Battle Timer</string>
+  <string name="minute_3_timer">💡 3 minute timer</string>
+  <string name="minute_5_timer">💡 5 minute timer</string>
+  <string name="minute_10_timer">💡 10 minute timer</string>
+  <string name="minute_15_timer">🍅 15 minute timer</string>
+  <string name="minute_25_timer">🍅 25 minute timer</string>
+  <string name="minute_50_timer">🎯 50 minute timer</string>
 </resources>
