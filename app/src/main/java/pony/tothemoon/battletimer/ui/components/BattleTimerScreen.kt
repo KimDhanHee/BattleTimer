@@ -336,7 +336,7 @@ private fun LoadingScreen(text: String) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.6f)),
+      .background(color = Color.Gray.copy(alpha = 0.8f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
@@ -353,7 +353,7 @@ private fun ReadyScreen(countdown: Int) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.6f)),
+      .background(color = Color.Gray.copy(alpha = 0.8f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
@@ -373,11 +373,11 @@ private fun ExitScreen(onTimeout: () -> Unit) {
   Box(
     modifier = Modifier
       .fillMaxSize()
-      .background(color = Color.Gray.copy(alpha = 0.6f)),
+      .background(color = Color.Gray.copy(alpha = 0.8f)),
     contentAlignment = Alignment.Center
   ) {
     Text(
-      text = "다음에는 더 잘할거에요\n또 만나요☺️",
+      text = stringResource(id = R.string.battle_timer_exit_encourage),
       color = Color.White,
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.displaySmall
