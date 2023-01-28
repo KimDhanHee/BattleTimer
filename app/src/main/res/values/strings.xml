@@ -12,4 +12,7 @@
   <string name="battle_timer_loading_search">🔍\nLooking for someone.</string>
   <string name="battle_timer_loading_enter">👋\n%s has entered.</string>
   <string name="battle_timer_loading_end">🤜 🤛\nBattle with %s will begin.</string>
+  <string name="battle_timer_exit_title">Would you like to stop here?</string>
+  <string name="battle_timer_exit_positive">next time</string>
+  <string name="battle_timer_exit_negative">30 more seconds</string>
 </resources>

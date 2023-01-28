@@ -75,9 +75,9 @@ fun BattleTimerScreen(
 
     if (showDialog) {
       ExitDialog(
-        title = "먼저 마무리 하시겠어요?",
-        positive = "그만 할래",
-        negative = "더 해볼게",
+        title = stringResource(id = R.string.battle_timer_exit_title),
+        positive = stringResource(id = R.string.battle_timer_exit_positive),
+        negative = stringResource(id = R.string.battle_timer_exit_negative),
         onClickOk = {
           showDialog = false
           showExit = true
