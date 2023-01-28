@@ -168,11 +168,11 @@ private fun Body(
   timerUiState: BattleTimerUiState,
   modifier: Modifier = Modifier,
 ) {
-  Column(modifier = modifier.padding(top = 36.dp)) {
+  Column(modifier = modifier) {
     ProgressIndicator(
       progress = timerUiState.time / myTimer.time.toFloat(),
       progressText = when (timerUiState) {
-        is BattleTimerUiState.Finish -> "YOU WIN!"
+        is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_win)
         else -> timerUiState.time.timeStr
       },
       label = when (timerUiState) {
@@ -191,7 +191,7 @@ private fun Body(
       ProgressIndicator(
         progress = battleTimer.remainedTime / battleTime.toFloat(),
         progressText = when (timerUiState) {
-          is BattleTimerUiState.Finish -> "YOU LOSE"
+          is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_lose)
           else -> battleTimer.remainedTime.timeStr
         },
         label = when {
@@ -301,7 +301,7 @@ private fun ProgressIndicator(
     Text(
       text = progressText,
       modifier = Modifier
-        .padding(vertical = 16.dp)
+        .padding(vertical = 32.dp)
         .fillMaxWidth(),
       color = timerColor,
       textAlign = TextAlign.Center,
@@ -321,7 +321,7 @@ private fun ProgressIndicator(
       color = timerColor,
       trackColor = White900
     )
-    Spacer(modifier = Modifier.size(32.dp))
+    Spacer(modifier = Modifier.size(48.dp))
     Text(
       text = label,
       color = textColor,
