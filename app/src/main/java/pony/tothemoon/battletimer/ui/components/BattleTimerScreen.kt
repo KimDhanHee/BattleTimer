@@ -117,7 +117,7 @@ fun BattleTimerScreen(
           context.stopService(Intent(context, TimerService::class.java))
           AlarmUtils.setAlarm(
             context,
-            timerInfo.copy(remainedTime = timerInfo.remainedTime + 5 * TimerInfo.SECONDS_UNIT)
+            timerInfo.copy(remainedTime = timerInfo.remainedTime + 6 * TimerInfo.SECONDS_UNIT)
           )
         },
         onCancel = { onBack() },
@@ -129,7 +129,7 @@ fun BattleTimerScreen(
     }
 
     if (timerUiState is BattleTimerUiState.Loading) {
-      LoadingScreen()
+      LoadingScreen(stringResource(id = timerUiState.textRes, viewmodel.battleTimer.title))
     }
 
     if (timerUiState is BattleTimerUiState.Ready) {
@@ -331,7 +331,7 @@ private fun ProgressIndicator(
 }
 
 @Composable
-private fun LoadingScreen() {
+private fun LoadingScreen(text: String) {
   Box(
     modifier = Modifier
       .fillMaxSize()
@@ -339,8 +339,9 @@ private fun LoadingScreen() {
     contentAlignment = Alignment.Center
   ) {
     Text(
-      text = "상대방 탐색 중 입니다...",
+      text = text,
       color = Color.White,
+      textAlign = TextAlign.Center,
       style = MaterialTheme.typography.displaySmall
     )
   }

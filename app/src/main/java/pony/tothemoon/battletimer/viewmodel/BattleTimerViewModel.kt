@@ -1,5 +1,6 @@
 package pony.tothemoon.battletimer.viewmodel
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.model.TimerInfo
@@ -66,18 +68,33 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   fun start() {
     viewModelScope.launch {
       if (timerUiState is BattleTimerUiState.Idle || timerUiState is BattleTimerUiState.Finish) {
-        timerUiState = BattleTimerUiState.Loading(timerInfo.time)
+        loading()
+
         battleTimer = battleTimer.copy(time = timerInfo.time)
 
-        delay(2000)
-
-        repeat(3) {
-          delay(TimerInfo.SECONDS_UNIT)
-          timerUiState = BattleTimerUiState.Ready(timerUiState.time, 3 - it)
-        }
+        countdown()
 
         startBattle()
       }
+    }
+  }
+
+  private suspend fun loading() {
+    val loadingTextRes = arrayOf(
+      R.string.battle_timer_loading_search,
+      R.string.battle_timer_loading_enter,
+      R.string.battle_timer_loading_end
+    )
+    loadingTextRes.forEach { textRes ->
+      timerUiState = BattleTimerUiState.Loading(timerInfo.time, textRes)
+      delay(1000)
+    }
+  }
+
+  private suspend fun countdown() {
+    repeat(3) {
+      delay(TimerInfo.SECONDS_UNIT)
+      timerUiState = BattleTimerUiState.Ready(timerUiState.time, 3 - it)
     }
   }
 
@@ -114,7 +131,7 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
 sealed class BattleTimerUiState {
   data class Idle(override val time: Long) : BattleTimerUiState()
-  data class Loading(override val time: Long) : BattleTimerUiState()
+  data class Loading(override val time: Long, @StringRes val textRes: Int) : BattleTimerUiState()
   data class Ready(override val time: Long, val countdown: Int) : BattleTimerUiState()
   data class Running(
     override val time: Long,
