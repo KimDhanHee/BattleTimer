@@ -250,19 +250,19 @@ private fun Footer(
         )
       is BattleTimerUiState.Loading, is BattleTimerUiState.Ready, is BattleTimerUiState.Running ->
         TimerButton(
-          text = "포기하기",
+          text = stringResource(id = R.string.battle_timer_button_giveup),
           color = textColor,
           onClick = onCancel
         )
       is BattleTimerUiState.Finish -> {
         TimerButton(
-          text = "한번 더 하기",
+          text = stringResource(id = R.string.battle_timer_button_one_more),
           color = textColor,
           onClick = onClickStart
         )
         Spacer(modifier = Modifier.size(20.dp))
         TimerButton(
-          text = "종료하기",
+          text = stringResource(id = R.string.battle_timer_button_finish),
           color = textColor,
           onClick = onFinish
         )

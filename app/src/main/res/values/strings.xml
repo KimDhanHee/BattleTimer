@@ -9,6 +9,9 @@
   <string name="timer_list_battle_timer_title">%s He\'s concentrating. 🔥</string>
   <string name="battle_timer_bottom_description">Let\'s start off lightly.</string>
   <string name="battle_timer_button_start">Start battle</string>
+  <string name="battle_timer_button_giveup">Giving up</string>
+  <string name="battle_timer_button_one_more">One more time</string>
+  <string name="battle_timer_button_finish">Finish</string>
   <string name="battle_timer_loading_search">🔍\nLooking for someone.</string>
   <string name="battle_timer_loading_enter">👋\n%s has entered.</string>
   <string name="battle_timer_loading_end">🤜 🤛\nBattle with %s will begin.</string>
