@@ -17,8 +17,8 @@ object AndroidUtils {
   val context: Context
     get() = application
 
-  fun string(@StringRes resId: Int): String = when (resId) {
+  fun string(@StringRes resId: Int, vararg formatArgs: Any): String = when (resId) {
     0 -> ""
-    else -> context.resources.getString(resId)
+    else -> context.resources.getString(resId, *formatArgs)
   }
 }
