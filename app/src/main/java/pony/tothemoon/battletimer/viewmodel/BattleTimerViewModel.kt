@@ -102,7 +102,7 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     )
     loadingTextRes.forEach { textRes ->
       timerUiState = BattleTimerUiState.Loading(timerInfo.time, textRes)
-      delay(1000)
+      delay(2000)
     }
   }
 

@@ -118,7 +118,7 @@ fun BattleTimerScreen(
           context.stopService(Intent(context, TimerService::class.java))
           AlarmUtils.setAlarm(
             context,
-            timerInfo.copy(remainedTime = timerInfo.remainedTime + 6 * TimerInfo.SECONDS_UNIT)
+            timerInfo.copy(remainedTime = timerInfo.remainedTime + 9 * TimerInfo.SECONDS_UNIT)
           )
         },
         onCancel = { onBack() },
