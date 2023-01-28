@@ -15,9 +15,15 @@ import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.model.TimerInfo
+import pony.tothemoon.battletimer.utils.AndroidUtils
 
 class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
-  var battleTimer by mutableStateOf(TimerInfo(title = "익명의 코뿔소", time = timerInfo.remainedTime))
+  var battleTimer by mutableStateOf(
+    TimerInfo(
+      title = AndroidUtils.stringArray(R.array.random_users).random(),
+      time = timerInfo.remainedTime
+    )
+  )
     private set
 
   var timerUiState: BattleTimerUiState by mutableStateOf(BattleTimerUiState.Idle(timerInfo.remainedTime))

@@ -15,7 +15,10 @@ import pony.tothemoon.battletimer.utils.AndroidUtils
 class TimerListViewModel : ViewModel() {
   var battleTimer by mutableStateOf(
     TimerInfo(
-      title = AndroidUtils.string(R.string.timer_list_battle_timer_title, "익명의 코뿔소"),
+      title = AndroidUtils.string(
+        R.string.timer_list_battle_timer_title,
+        AndroidUtils.stringArray(R.array.random_users).random()
+      ),
       time = 0
     )
   )
