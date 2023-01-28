@@ -26,19 +26,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
+import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
@@ -219,11 +220,20 @@ private fun Footer(
     battleTimerUiState.displayBattle -> Color.White
     else -> Gray100
   }
-  val buttonColor = when {
+  val textColor = when {
     battleTimerUiState.displayBattle -> Gray100
     else -> Color.White
   }
 
+  if (battleTimerUiState is BattleTimerUiState.Idle) {
+    Text(
+      modifier = Modifier.fillMaxWidth(),
+      text = stringResource(id = R.string.battle_timer_bottom_description),
+      color = textColor,
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.labelMedium,
+    )
+  }
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -234,26 +244,26 @@ private fun Footer(
     when (battleTimerUiState) {
       is BattleTimerUiState.Idle ->
         TimerButton(
-          text = "배틀 시작하기",
-          color = buttonColor,
+          text = stringResource(id = R.string.battle_timer_button_start),
+          color = textColor,
           onClick = onClickStart
         )
       is BattleTimerUiState.Loading, is BattleTimerUiState.Ready, is BattleTimerUiState.Running ->
         TimerButton(
           text = "포기하기",
-          color = buttonColor,
+          color = textColor,
           onClick = onCancel
         )
       is BattleTimerUiState.Finish -> {
         TimerButton(
           text = "한번 더 하기",
-          color = buttonColor,
+          color = textColor,
           onClick = onClickStart
         )
         Spacer(modifier = Modifier.size(20.dp))
         TimerButton(
           text = "종료하기",
-          color = buttonColor,
+          color = textColor,
           onClick = onFinish
         )
       }
