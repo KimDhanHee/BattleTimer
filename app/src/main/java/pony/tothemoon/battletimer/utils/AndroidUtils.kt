@@ -2,6 +2,7 @@ package pony.tothemoon.battletimer.utils
 
 import android.app.Application
 import android.content.Context
+import androidx.annotation.StringRes
 
 object AndroidUtils {
   lateinit var application: Application
@@ -15,4 +16,9 @@ object AndroidUtils {
 
   val context: Context
     get() = application
+
+  fun string(@StringRes resId: Int): String = when (resId) {
+    0 -> ""
+    else -> context.resources.getString(resId)
+  }
 }
