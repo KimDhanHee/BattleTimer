@@ -16,4 +16,16 @@
   <string name="battle_timer_exit_title">"먼저 마무리 하시겠어요? "</string>
   <string name="battle_timer_exit_positive">그만할래</string>
   <string name="battle_timer_exit_negative">다시 30초만 더 해볼게</string>
+  <string name="battle_timer_encourage_1">집중! 집중!</string>
+  <string name="battle_timer_encourage_2">집중이 깨졌나요? 다시 10초만 집중해봐요.</string>
+  <string name="battle_timer_encourage_3">화면을 보지 말고 다시 집중하세요.</string>
+  <string name="battle_timer_encourage_4">하기 싫을 일을 한다는건 정말 대단한 일이에요.</string>
+  <string name="battle_timer_encourage_5">끝까지만 하면 이기는거에요. </string>
+  <string name="battle_timer_encourage_6">힘내세요! 할 수 있어요!</string>
+  <string name="battle_timer_encourage_7">심각하게 생각하지 마세요.</string>
+  <string name="battle_timer_encourage_8">무슨 생각을 해.. 그냥 하는거지 - 김연아</string>
+  <string name="battle_timer_encourage_9">하기 싫은 일을 해낼 때 성공은 따라오는 법</string>
+  <string name="battle_timer_encourage_10">모든 성취는 하기 싫은 마음을 다스리는 데서 시작됩니다. </string>
+  <string name="battle_timer_encourage_11">천리길도 한걸음부터</string>
+  <string name="battle_timer_encourage_12">작은 물방울이 바위를 뚫는다!</string>
 </resources>

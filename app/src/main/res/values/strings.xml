@@ -15,4 +15,16 @@
   <string name="battle_timer_exit_title">Would you like to stop here?</string>
   <string name="battle_timer_exit_positive">next time</string>
   <string name="battle_timer_exit_negative">30 more seconds</string>
+  <string name="battle_timer_encourage_1">Focus! Focus!</string>
+  <string name="battle_timer_encourage_2">Are you distracted? Let\'s focus for 10 seconds.</string>
+  <string name="battle_timer_encourage_3">Don\'t look at the screen and focus again.</string>
+  <string name="battle_timer_encourage_4">It\'s great to do something you don\'t want to do.</string>
+  <string name="battle_timer_encourage_5">If you do it until the end, you win.</string>
+  <string name="battle_timer_encourage_6">Cheer up! You can do it!</string>
+  <string name="battle_timer_encourage_7">Don\'t take it seriously.</string>
+  <string name="battle_timer_encourage_8">What are you thinking? Just Do It -  Yuna Kim</string>
+  <string name="battle_timer_encourage_9">Success follows when you do something you don\'t want to do.</string>
+  <string name="battle_timer_encourage_10">Every achievement begins with controlling the mind you don\'t want to do.</string>
+  <string name="battle_timer_encourage_11">Step by step one goes a long way.</string>
+  <string name="battle_timer_encourage_12">Small drops of water penetrate the rock!</string>
 </resources>

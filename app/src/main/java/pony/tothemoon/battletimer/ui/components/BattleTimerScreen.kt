@@ -176,7 +176,7 @@ private fun Body(
         else -> timerUiState.time.timeStr
       },
       label = when (timerUiState) {
-        is BattleTimerUiState.Running -> timerUiState.encourageText
+        is BattleTimerUiState.Running -> stringResource(id = timerUiState.textRes)
         else -> ""
       },
       modifier = Modifier
@@ -325,7 +325,8 @@ private fun ProgressIndicator(
     Text(
       text = label,
       color = textColor,
-      style = MaterialTheme.typography.labelMedium
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.labelMedium,
     )
   }
 }
