@@ -6,4 +6,5 @@
   <string name="minute_15_timer">🍅 15 minute timer</string>
   <string name="minute_25_timer">🍅 25 minute timer</string>
   <string name="minute_50_timer">🎯 50 minute timer</string>
+  <string name="timer_list_battle_timer_title">%s He\'s concentrating. 🔥</string>
 </resources>
