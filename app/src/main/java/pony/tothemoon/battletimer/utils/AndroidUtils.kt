@@ -29,9 +29,9 @@ object AndroidUtils {
     else -> context.resources.getStringArray(resId)
   }
 
-  var isForeground: Boolean = false
+  var isBackground: Boolean = true
     private set
 
-  fun resume() { isForeground = true }
-  fun pause() { isForeground = false }
+  fun resume() { isBackground = false }
+  fun pause() { isBackground = true }
 }

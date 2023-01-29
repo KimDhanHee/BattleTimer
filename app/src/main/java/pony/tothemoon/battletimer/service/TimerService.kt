@@ -1,26 +1,18 @@
 package pony.tothemoon.battletimer.service
 
-import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
-import android.media.RingtoneManager
 import android.os.Build
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.utils.AlarmUtils
+import pony.tothemoon.battletimer.utils.AndroidUtils
+import pony.tothemoon.battletimer.utils.MediaVibrator
 import pony.tothemoon.battletimer.utils.NotificationUtils
-import pony.tothemoon.battletimer.utils.WakeLockManager
-import pony.tothemoon.media.MediaPlayer
 
 class TimerService : LifecycleService() {
-  private val player by lazy {
-    MediaPlayer(this)
-  }
-
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     if (intent?.action != AlarmUtils.ACTION_TIME_OUT)
       return super.onStartCommand(intent, flags, startId)
@@ -29,7 +21,9 @@ class TimerService : LifecycleService() {
 
     displayNotification(timerInfo)
 
-    alertTimeout()
+    if (AndroidUtils.isBackground) {
+      alertTimeout()
+    }
 
     return super.onStartCommand(intent, flags, startId)
   }
@@ -42,36 +36,23 @@ class TimerService : LifecycleService() {
     }
 
   private fun displayNotification(timerInfo: TimerInfo) {
-    when {
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> startForeground(
+    NotificationUtils.notifyTimerTimeout(this, timerInfo)
+
+    val needToStartForeground = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+    if (needToStartForeground) {
+      startForeground(
         timerInfo.id,
         NotificationUtils.buildTimerTimeoutNotification(this, timerInfo.title)
       )
-      else -> NotificationUtils.notifyTimerTimeout(this, timerInfo)
     }
   }
 
   private fun alertTimeout() {
     lifecycleScope.launch {
-      if (player.isPlaying()) return@launch
-
-      val ringtone = RingtoneManager.getActualDefaultRingtoneUri(
-        this@TimerService,
-        RingtoneManager.TYPE_ALARM
-      )
-      val audioManager = this@TimerService.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-      val volume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) / 2
-
-      player.play(ringtone, volume)
+      while (AndroidUtils.isBackground) {
+        MediaVibrator.vibrateOnce(this@TimerService)
+        delay(10 * TimerInfo.SECONDS_UNIT)
+      }
     }
-  }
-
-  override fun onDestroy() {
-    WakeLockManager.release()
-    CoroutineScope(Dispatchers.IO).launch {
-      player.release()
-    }
-    stopForeground(STOP_FOREGROUND_DETACH)
-    super.onDestroy()
   }
 }
