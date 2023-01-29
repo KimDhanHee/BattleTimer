@@ -42,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import pony.tothemoon.battletimer.R
+import pony.tothemoon.battletimer.extensions.keepScreenOn
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
@@ -60,6 +61,8 @@ fun BattleTimerScreen(
   navController: NavHostController,
   viewmodel: BattleTimerViewModel = viewModel(factory = BattleTimerViewModelFactory(timerInfo)),
 ) {
+  keepScreenOn()
+
   onLifecycleEvent { event ->
     when (event) {
       Lifecycle.Event.ON_CREATE -> viewmodel.clear()

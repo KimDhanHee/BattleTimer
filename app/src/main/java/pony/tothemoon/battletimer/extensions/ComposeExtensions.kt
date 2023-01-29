@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 
@@ -22,6 +23,17 @@ fun onLifecycleEvent(onEvent: (event: Lifecycle.Event) -> Unit) {
     lifecycle.addObserver(observer)
     onDispose {
       lifecycle.removeObserver(observer)
+    }
+  }
+}
+
+@Composable
+fun keepScreenOn() {
+  val view = LocalView.current
+  DisposableEffect(Unit) {
+    view.keepScreenOn = true
+    onDispose {
+      view.keepScreenOn = false
     }
   }
 }

@@ -37,6 +37,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import pony.tothemoon.battletimer.R
+import pony.tothemoon.battletimer.extensions.keepScreenOn
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.model.timeStr
@@ -53,6 +54,8 @@ fun SingleTimerScreen(
   navController: NavHostController,
   viewmodel: SingleTimerViewModel = viewModel(factory = SingleTimerViewModelFactory(timerInfo)),
 ) {
+  keepScreenOn()
+
   val context = LocalContext.current
 
   onLifecycleEvent { event ->
