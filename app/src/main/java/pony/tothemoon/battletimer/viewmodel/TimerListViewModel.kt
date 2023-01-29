@@ -18,10 +18,7 @@ class TimerListViewModel : ViewModel() {
 
   var battleTimer by mutableStateOf(
     TimerInfo(
-      title = AndroidUtils.string(
-        R.string.timer_list_battle_timer_title,
-        newRandomUser
-      ),
+      title = AndroidUtils.string(R.string.timer_list_battle_timer_title, newRandomUser),
       time = 0
     )
   )
@@ -34,7 +31,10 @@ class TimerListViewModel : ViewModel() {
   }
 
   fun refreshBattleTimer() {
-    battleTimer = battleTimer.copy(title = newRandomUser, time = 0)
+    battleTimer = battleTimer.copy(
+      title = AndroidUtils.string(R.string.timer_list_battle_timer_title, newRandomUser),
+      time = 0
+    )
     startBattleTimer()
   }
 
@@ -52,11 +52,17 @@ class TimerListViewModel : ViewModel() {
   }
 
   val presetTimers = arrayOf(
-    TimerInfo(title = AndroidUtils.string(R.string.minute_3_timer), time = 3 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_5_timer), time = 5 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_10_timer), time = 10 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_15_timer), time = 15 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_25_timer), time = 25 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_50_timer), time = 50 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_3_timer),
+      time = 3 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_5_timer),
+      time = 5 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_10_timer),
+      time = 10 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_15_timer),
+      time = 15 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_25_timer),
+      time = 25 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_50_timer),
+      time = 50 * TimerInfo.MINUTE_UNIT),
   )
 }
