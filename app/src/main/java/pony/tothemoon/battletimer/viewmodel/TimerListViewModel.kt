@@ -13,11 +13,14 @@ import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.utils.AndroidUtils
 
 class TimerListViewModel : ViewModel() {
+  private val newRandomUser: String
+    get() = AndroidUtils.stringArray(R.array.random_users).random()
+
   var battleTimer by mutableStateOf(
     TimerInfo(
       title = AndroidUtils.string(
         R.string.timer_list_battle_timer_title,
-        AndroidUtils.stringArray(R.array.random_users).random()
+        newRandomUser
       ),
       time = 0
     )
@@ -31,7 +34,7 @@ class TimerListViewModel : ViewModel() {
   }
 
   fun refreshBattleTimer() {
-    battleTimer = battleTimer.copy(time = 0)
+    battleTimer = battleTimer.copy(title = newRandomUser, time = 0)
     startBattleTimer()
   }
 
@@ -40,7 +43,10 @@ class TimerListViewModel : ViewModel() {
     timerJob = viewModelScope.launch {
       while (true) {
         delay(TimerInfo.SECONDS_UNIT)
-        battleTimer = battleTimer.copy(time = battleTimer.time + TimerInfo.SECONDS_UNIT)
+        when {
+          battleTimer.time >= 50 * TimerInfo.MINUTE_UNIT -> refreshBattleTimer()
+          else -> battleTimer = battleTimer.copy(time = battleTimer.time + TimerInfo.SECONDS_UNIT)
+        }
       }
     }
   }
