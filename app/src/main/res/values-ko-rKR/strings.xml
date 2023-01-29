@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">배틀 타이머</string>
+  <string name="timer_list_single_timer">싱글 타이머</string>
+  <string name="timer_list_battle_timer">배틀 타이머</string>
   <string name="minute_3_timer">💡 3분 타이머</string>
   <string name="minute_5_timer">💡 5분 타이머</string>
   <string name="minute_10_timer">💡 10분 타이머</string>
