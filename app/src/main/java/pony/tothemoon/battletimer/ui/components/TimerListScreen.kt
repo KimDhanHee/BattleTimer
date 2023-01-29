@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -63,7 +64,7 @@ fun TimerListScreen(
     TimerList(
       battleTimer = timerListViewModel.battleTimer,
       timerArray = timerList,
-      onClickTimer = onClickTimer,
+      onClickSingle = onClickTimer,
       onClickBattle = onClickBattle,
     )
   }
@@ -83,7 +84,7 @@ private fun TimerList(
   battleTimer: TimerInfo,
   modifier: Modifier = Modifier,
   timerArray: Array<TimerInfo> = emptyArray(),
-  onClickTimer: (TimerInfo) -> Unit = {},
+  onClickSingle: (TimerInfo) -> Unit = {},
   onClickBattle: (TimerInfo) -> Unit = {},
 ) {
   LazyColumn(
@@ -96,11 +97,23 @@ private fun TimerList(
     }
 
     items(timerArray) { timerInfo ->
-      TimerListItem(
-        timerInfo,
-        onClickTimer = onClickTimer,
-        onClickBattle = onClickBattle
-      )
+      Row {
+        TimerListItem(
+          title = stringResource(id = R.string.timer_list_single_timer),
+          subTitle = timerInfo.time.timeStr,
+          painter = painterResource(id = R.drawable.ic_single_timer),
+          modifier = Modifier.weight(1f),
+          onClick = { onClickSingle(timerInfo) },
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        TimerListItem(
+          title = stringResource(id = R.string.timer_list_battle_timer),
+          subTitle = timerInfo.time.timeStr,
+          painter = painterResource(id = R.drawable.ic_battle_timer),
+          modifier = Modifier.weight(1f),
+          onClick = { onClickBattle(timerInfo) },
+        )
+      }
     }
   }
 }
@@ -128,41 +141,39 @@ private fun BattleTimer(timerInfo: TimerInfo, modifier: Modifier = Modifier) {
 
 @Composable
 private fun TimerListItem(
-  timerInfo: TimerInfo,
+  title: String,
+  subTitle: String,
+  painter: Painter,
   modifier: Modifier = Modifier,
-  onClickBattle: (TimerInfo) -> Unit = {},
-  onClickTimer: (TimerInfo) -> Unit = {},
+  onClick: () -> Unit = {},
 ) {
   Card(
     modifier = modifier
-      .fillMaxWidth(),
+      .fillMaxWidth()
+      .clickable { onClick() },
     shape = RoundedCornerShape(12.dp),
     colors = CardDefaults.cardColors(containerColor = Gray100)
   ) {
-    Row(modifier = Modifier
-      .fillMaxWidth()
-      .padding(20.dp),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      TimerListItemContent(timerInfo, modifier = Modifier.weight(1f))
-
-      Icon(
-        painter = painterResource(id = R.drawable.ic_timer_32_32),
-        contentDescription = null,
-        modifier = Modifier
-          .padding(8.dp)
-          .clickable { onClickTimer(timerInfo) },
-        tint = Color.White
+    Column(modifier = Modifier.padding(start = 12.dp, top = 20.dp, end = 12.dp, bottom = 36.dp)) {
+      Text(
+        text = title,
+        color = Color.White,
+        style = MaterialTheme.typography.titleMedium
       )
-      Spacer(modifier = Modifier.size(8.dp))
-      Icon(
-        painter = painterResource(id = R.drawable.ic_swords_32),
-        contentDescription = null,
-        modifier = Modifier
-          .padding(8.dp)
-          .clickable { onClickBattle(timerInfo) },
-        tint = Color.White
-      )
+      Spacer(modifier = Modifier.size(4.dp))
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+          painter = painter,
+          contentDescription = null,
+          tint = Color.White
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+          text = subTitle,
+          color = Color.White,
+          style = MaterialTheme.typography.titleMedium
+        )
+      }
     }
   }
 }
