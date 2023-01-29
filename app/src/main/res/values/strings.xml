@@ -8,15 +8,15 @@
   <string name="minute_15_timer">🍅 15 minute timer</string>
   <string name="minute_25_timer">🍅 25 minute timer</string>
   <string name="minute_50_timer">🎯 50 minute timer</string>
-  <string name="timer_list_battle_timer_title">%s He\'s concentrating. 🔥</string>
-  <string name="battle_timer_bottom_description">Let\'s start off lightly.</string>
+  <string name="timer_list_battle_timer_title">%s is concentrating 🔥</string>
+  <string name="battle_timer_bottom_description">Let\'s start off lightly</string>
   <string name="battle_timer_button_start">Start battle</string>
   <string name="battle_timer_button_giveup">Giving up</string>
   <string name="battle_timer_button_one_more">One more time</string>
   <string name="battle_timer_button_finish">Finish</string>
-  <string name="battle_timer_loading_search">🔍\nLooking for someone.</string>
-  <string name="battle_timer_loading_enter">👋\n%s has entered.</string>
-  <string name="battle_timer_loading_end">🤜 🤛\nBattle with %s will begin.</string>
+  <string name="battle_timer_loading_search">🔍\nLooking for someone</string>
+  <string name="battle_timer_loading_enter">👋\n%s has entered</string>
+  <string name="battle_timer_loading_end">🤜 🤛\nBattle with %s will begin</string>
   <string name="battle_timer_exit_title">Would you like to stop here?</string>
   <string name="battle_timer_exit_positive">next time</string>
   <string name="battle_timer_exit_negative">30 more seconds</string>
@@ -37,7 +37,7 @@
   <string name="battle_timer_other_left">%s has left</string>
   <string name="battle_timer_win" translatable="false">YOU WIN! 🏆</string>
   <string name="battle_timer_lose" translatable="false">YOU LOSE 😞</string>
-  <string name="battle_timer_feedback_title">Please give us your opinion so that the battle timer can develop further.</string>
+  <string name="battle_timer_feedback_title">Please give us your opinion so that the battle timer can develop further</string>
   <string name="battle_timer_feedback_positive">OK</string>
   <string name="battle_timer_feedback_negative">Later</string>
   <string name="single_timer_exit_title">Would you like to stop here?</string>
