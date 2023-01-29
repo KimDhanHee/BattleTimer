@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -51,6 +52,7 @@ import pony.tothemoon.battletimer.utils.AlarmUtils
 import pony.tothemoon.battletimer.viewmodel.BattleTimerUiState
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModelFactory
+import java.util.Locale
 
 @Composable
 fun BattleTimerScreen(
@@ -69,22 +71,44 @@ fun BattleTimerScreen(
   Box(modifier = Modifier.fillMaxSize()) {
     val timerUiState = viewmodel.timerUiState
 
-    var showDialog by remember { mutableStateOf(false) }
-    var showExit by remember { mutableStateOf(false) }
+    var showExitDialog by remember { mutableStateOf(false) }
+    var showFeedbackDialog by remember { mutableStateOf(false) }
+    var showExitScreen by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
-    if (showDialog) {
-      ExitDialog(
+    LaunchedEffect(timerUiState) {
+      if (timerUiState is BattleTimerUiState.Finish) showFeedbackDialog = true
+    }
+
+    if (showFeedbackDialog) {
+      ConfirmDialog(
+        title = stringResource(id = R.string.battle_timer_feedback_title),
+        positive = stringResource(id = R.string.battle_timer_feedback_positive),
+        negative = stringResource(id = R.string.battle_timer_feedback_negative),
+        onClickOk = {
+          showFeedbackDialog = false
+          val uri = when (Locale.getDefault()) {
+            Locale.KOREA, Locale.KOREAN -> "https://tally.so/r/mKprWM"
+            else -> ":https://tally.so/r/3X5bzL"
+          }.toUri()
+          context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+        },
+        onClickCancel = { showFeedbackDialog = false },
+      )
+    }
+
+    if (showExitDialog) {
+      ConfirmDialog(
         title = stringResource(id = R.string.battle_timer_exit_title),
         positive = stringResource(id = R.string.battle_timer_exit_positive),
         negative = stringResource(id = R.string.battle_timer_exit_negative),
         onClickOk = {
-          showDialog = false
-          showExit = true
+          showExitDialog = false
+          showExitScreen = true
           AlarmUtils.cancelAlarm(context, timerInfo.id)
         },
-        onClickCancel = { showDialog = false },
+        onClickCancel = { showExitDialog = false },
       )
     }
 
@@ -92,7 +116,7 @@ fun BattleTimerScreen(
       when (timerUiState) {
         is BattleTimerUiState.Idle -> cancel(navController)
         is BattleTimerUiState.Finish -> reset(navController)
-        else -> showDialog = true
+        else -> showExitDialog = true
       }
     }
 
@@ -137,9 +161,9 @@ fun BattleTimerScreen(
       ReadyScreen(timerUiState.countdown)
     }
 
-    if (showExit) {
+    if (showExitScreen) {
       ExitScreen(onTimeout = {
-        showExit = false
+        showExitScreen = false
 
         viewmodel.cancel()
         cancel(navController)

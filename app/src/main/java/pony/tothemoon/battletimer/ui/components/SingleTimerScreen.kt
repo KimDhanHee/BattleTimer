@@ -65,7 +65,7 @@ fun SingleTimerScreen(
 
   var showDialog by remember { mutableStateOf(false) }
   if (showDialog) {
-    ExitDialog(
+    ConfirmDialog(
       title = stringResource(id = R.string.single_timer_exit_title),
       positive = stringResource(id = R.string.single_timer_exit_positive),
       negative = stringResource(id = R.string.single_timer_exit_negative),
