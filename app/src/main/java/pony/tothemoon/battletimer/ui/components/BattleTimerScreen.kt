@@ -50,6 +50,8 @@ import pony.tothemoon.battletimer.service.TimerService
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.ui.theme.White900
 import pony.tothemoon.battletimer.utils.AlarmUtils
+import pony.tothemoon.battletimer.utils.AndroidUtils
+import pony.tothemoon.battletimer.utils.NotificationUtils
 import pony.tothemoon.battletimer.viewmodel.BattleTimerUiState
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.BattleTimerViewModelFactory
@@ -110,6 +112,7 @@ fun BattleTimerScreen(
           showExitDialog = false
           showExitScreen = true
           AlarmUtils.cancelAlarm(context, timerInfo.id)
+          NotificationUtils.removeNotification(context, timerInfo.id)
         },
         onClickCancel = { showExitDialog = false },
       )
@@ -147,11 +150,17 @@ fun BattleTimerScreen(
             context,
             timerInfo.copy(remainedTime = timerInfo.remainedTime + 9 * TimerInfo.SECONDS_UNIT)
           )
+          NotificationUtils.notify(context,
+            timerInfo.id,
+            timerInfo.title,
+            AndroidUtils.string(R.string.timer_noti_start_sub_title)
+          )
         },
         onCancel = { onBack() },
         onFinish = {
           reset(navController)
           context.stopService(Intent(context, TimerService::class.java))
+          NotificationUtils.removeNotification(context, timerInfo.id)
         },
       )
     }
