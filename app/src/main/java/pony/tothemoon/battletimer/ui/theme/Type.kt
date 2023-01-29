@@ -24,6 +24,10 @@ val Typography = Typography(
     fontSize = 24.sp,
     fontWeight = FontWeight.Bold
   ),
+  titleMedium = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.SemiBold
+  ),
   bodyLarge = TextStyle(
     fontSize = 32.sp,
     fontWeight = FontWeight.SemiBold,
