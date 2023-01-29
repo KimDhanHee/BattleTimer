@@ -28,6 +28,7 @@ import pony.tothemoon.battletimer.ui.components.TimerDestination
 import pony.tothemoon.battletimer.ui.components.TimerListScreen
 import pony.tothemoon.battletimer.ui.theme.BattleTimerTheme
 import pony.tothemoon.battletimer.ui.theme.Gray100
+import pony.tothemoon.battletimer.utils.AndroidUtils
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +36,18 @@ class MainActivity : ComponentActivity() {
     setContent {
       TimerApp()
     }
+  }
+
+  override fun onResume() {
+    super.onResume()
+
+    AndroidUtils.resume()
+  }
+
+  override fun onPause() {
+    super.onPause()
+
+    AndroidUtils.pause()
   }
 
   @Composable
