@@ -52,17 +52,11 @@ class TimerListViewModel : ViewModel() {
   }
 
   val presetTimers = arrayOf(
-    TimerInfo(title = AndroidUtils.string(R.string.minute_3_timer),
-      time = 3 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_5_timer),
-      time = 5 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_10_timer),
-      time = 10 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_15_timer),
-      time = 15 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_25_timer),
-      time = 25 * TimerInfo.MINUTE_UNIT),
-    TimerInfo(title = AndroidUtils.string(R.string.minute_50_timer),
-      time = 50 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_3_timer), time = 3 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_5_timer), time = 5 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_10_timer), time = 10 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_15_timer), time = 15 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_25_timer), time = 25 * TimerInfo.MINUTE_UNIT),
+    TimerInfo(title = AndroidUtils.string(R.string.minute_50_timer), time = 50 * TimerInfo.MINUTE_UNIT),
   )
 }
