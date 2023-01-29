@@ -54,7 +54,7 @@ fun Header(text: String, onClickBack: () -> Unit) {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ExitDialog(
+fun ConfirmDialog(
   title: String,
   positive: String,
   negative: String,
