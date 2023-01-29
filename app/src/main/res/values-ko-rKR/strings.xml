@@ -42,6 +42,11 @@
   <string name="single_timer_exit_title">종료하시겠습니까?</string>
   <string name="single_timer_exit_positive">예</string>
   <string name="single_timer_exit_negative">아니오</string>
+  <string name="single_timer_finish">타이머 종료</string>
+  <string name="single_timer_button_dismiss">해제</string>
+  <string name="timer_noti_start_sub_title">타이머가 실행 중 입니다</string>
+  <string name="timer_noti_end_title">%s 타이머 완료</string>
+  <string name="timer_noti_end_sub_title">배틀에서 승리하셨습니다!</string>
   <string-array name="random_users">
     <item>찝찝한 아벨군</item>
     <item>다정한 바꿈터</item>

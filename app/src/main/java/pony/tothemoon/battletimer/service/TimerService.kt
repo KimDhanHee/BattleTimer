@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.utils.AlarmUtils
 import pony.tothemoon.battletimer.utils.AndroidUtils
@@ -36,13 +37,15 @@ class TimerService : LifecycleService() {
     }
 
   private fun displayNotification(timerInfo: TimerInfo) {
-    NotificationUtils.notifyTimerTimeout(this, timerInfo)
+    val subTitle = AndroidUtils.string(R.string.timer_noti_end_sub_title)
+
+    NotificationUtils.notify(this, timerInfo.id, timerInfo.title, subTitle)
 
     val needToStartForeground = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
     if (needToStartForeground) {
       startForeground(
         timerInfo.id,
-        NotificationUtils.buildTimerTimeoutNotification(this, timerInfo.title)
+        NotificationUtils.buildNotification(this, timerInfo.title, subTitle)
       )
     }
   }

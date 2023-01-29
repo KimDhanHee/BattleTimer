@@ -44,6 +44,8 @@ import pony.tothemoon.battletimer.model.timeStr
 import pony.tothemoon.battletimer.service.TimerService
 import pony.tothemoon.battletimer.ui.theme.Gray100
 import pony.tothemoon.battletimer.utils.AlarmUtils
+import pony.tothemoon.battletimer.utils.AndroidUtils
+import pony.tothemoon.battletimer.utils.NotificationUtils
 import pony.tothemoon.battletimer.viewmodel.SingleTimerUiState
 import pony.tothemoon.battletimer.viewmodel.SingleTimerViewModel
 import pony.tothemoon.battletimer.viewmodel.SingleTimerViewModelFactory
@@ -78,6 +80,7 @@ fun SingleTimerScreen(
         AlarmUtils.cancelAlarm(context, timerInfo.id)
         viewmodel.dismiss()
         cancel(navController)
+        NotificationUtils.removeNotification(context, timerInfo.id)
       },
       onClickCancel = {
         showDialog = false
@@ -109,6 +112,12 @@ fun SingleTimerScreen(
       onClickStart = {
         viewmodel.start()
         AlarmUtils.setAlarm(context, timerInfo.copy(remainedTime = timerUiState.time))
+        NotificationUtils.notify(
+          context,
+          timerInfo.id,
+          timerInfo.title,
+          AndroidUtils.string(R.string.timer_noti_start_sub_title)
+        )
       },
       onClickPause = {
         viewmodel.pause()
@@ -116,6 +125,7 @@ fun SingleTimerScreen(
       },
       onClickDismiss = {
         viewmodel.dismiss()
+        NotificationUtils.removeNotification(context, timerInfo.id)
         context.stopService(Intent(context, TimerService::class.java))
       },
       modifier = Modifier.weight(1f)
@@ -156,7 +166,7 @@ private fun Body(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
       if (timerUiState is SingleTimerUiState.Finish) {
         Text(
-          text = "타이머 종료",
+          text = stringResource(id = R.string.single_timer_finish),
           color = Color.White,
           style = MaterialTheme.typography.labelLarge
         )
@@ -195,7 +205,7 @@ private fun Body(
             )
             Spacer(modifier = Modifier.size(4.dp))
             Text(
-              text = "해제",
+              text = stringResource(id = R.string.single_timer_button_dismiss),
               style = MaterialTheme.typography.labelLarge,
               color = Color.Black
             )
