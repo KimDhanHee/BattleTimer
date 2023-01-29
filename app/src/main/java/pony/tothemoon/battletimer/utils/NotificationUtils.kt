@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import pony.tothemoon.battletimer.MainActivity
 import pony.tothemoon.battletimer.R
-import pony.tothemoon.battletimer.model.TimerInfo
 
 object NotificationUtils {
   private const val TIMER_ALARM_CHANNEL_ID = "timer_alarm_channel"
@@ -31,24 +30,11 @@ object NotificationUtils {
     )
   }
 
-  fun notifyTimerTimeout(context: Context, timerInfo: TimerInfo) {
-    context.notificationManager.notify(
-      timerInfo.id,
-      buildTimerTimeoutNotification(
-        context,
-        timerInfo.title
-      )
-    )
+  fun notify(context: Context, id: Int, title: String, subTitle: String) {
+    context.notificationManager.notify(id, buildNotification(context, title, subTitle))
   }
 
-  fun buildTimerTimeoutNotification(context: Context, title: String): Notification =
-    buildNotification(
-      context,
-      title,
-      description = ""
-    )
-
-  private fun buildNotification(
+  fun buildNotification(
     context: Context,
     title: String,
     description: String,

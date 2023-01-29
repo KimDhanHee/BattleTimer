@@ -28,4 +28,10 @@ object AndroidUtils {
     0 -> emptyArray()
     else -> context.resources.getStringArray(resId)
   }
+
+  var isBackground: Boolean = true
+    private set
+
+  fun resume() { isBackground = false }
+  fun pause() { isBackground = true }
 }

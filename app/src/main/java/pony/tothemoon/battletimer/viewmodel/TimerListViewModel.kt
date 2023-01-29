@@ -18,10 +18,7 @@ class TimerListViewModel : ViewModel() {
 
   var battleTimer by mutableStateOf(
     TimerInfo(
-      title = AndroidUtils.string(
-        R.string.timer_list_battle_timer_title,
-        newRandomUser
-      ),
+      title = AndroidUtils.string(R.string.timer_list_battle_timer_title, newRandomUser),
       time = 0
     )
   )
@@ -34,7 +31,10 @@ class TimerListViewModel : ViewModel() {
   }
 
   fun refreshBattleTimer() {
-    battleTimer = battleTimer.copy(title = newRandomUser, time = 0)
+    battleTimer = battleTimer.copy(
+      title = AndroidUtils.string(R.string.timer_list_battle_timer_title, newRandomUser),
+      time = 0
+    )
     startBattleTimer()
   }
 
