@@ -85,4 +85,5 @@ dependencies {
 
     implementation platform(libs.firebase)
     implementation(libs.bundles.firebase)
+    implementation(libs.admob)
 }
