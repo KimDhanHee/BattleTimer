@@ -23,9 +23,11 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +43,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.R
+import pony.tothemoon.battletimer.datastore.UserDataStore
 import pony.tothemoon.battletimer.extensions.keepScreenOn
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
@@ -83,23 +87,30 @@ fun BattleTimerScreen(
     val context = LocalContext.current
 
     LaunchedEffect(timerUiState) {
-      if (timerUiState is BattleTimerUiState.Finish) showFeedbackDialog = true
+      if (timerUiState is BattleTimerUiState.Finish) UserDataStore.finishBattle()
     }
 
+    val coroutineScope = rememberCoroutineScope()
     if (showFeedbackDialog) {
+      val onDismiss = {
+        showFeedbackDialog = false
+        coroutineScope.launch { UserDataStore.displayFeedbackDialog() }
+        reset(navController)
+      }
       ConfirmDialog(
         title = stringResource(id = R.string.battle_timer_feedback_title),
         positive = stringResource(id = R.string.battle_timer_feedback_positive),
         negative = stringResource(id = R.string.battle_timer_feedback_negative),
         onClickOk = {
-          showFeedbackDialog = false
           val uri = when (Locale.getDefault()) {
             Locale.KOREA, Locale.KOREAN -> "https://tally.so/r/mKprWM"
             else -> ":https://tally.so/r/3X5bzL"
           }.toUri()
           context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+
+          onDismiss()
         },
-        onClickCancel = { showFeedbackDialog = false },
+        onClickCancel = { onDismiss() },
       )
     }
 
@@ -118,10 +129,14 @@ fun BattleTimerScreen(
       )
     }
 
+    val needToDisplayFeedback by UserDataStore.displayFeedbackFlow.collectAsState(initial = false)
     val onBack = {
       when (timerUiState) {
         is BattleTimerUiState.Idle -> cancel(navController)
-        is BattleTimerUiState.Finish -> reset(navController)
+        is BattleTimerUiState.Finish -> when {
+          needToDisplayFeedback -> showFeedbackDialog = true
+          else -> reset(navController)
+        }
         else -> showExitDialog = true
       }
     }
@@ -158,7 +173,7 @@ fun BattleTimerScreen(
         },
         onCancel = { onBack() },
         onFinish = {
-          reset(navController)
+          onBack()
           context.stopService(Intent(context, TimerService::class.java))
           NotificationUtils.removeNotification(context, timerInfo.id)
         },
