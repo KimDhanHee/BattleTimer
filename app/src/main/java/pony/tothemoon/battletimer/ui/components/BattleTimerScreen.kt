@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -46,6 +47,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.datastore.UserDataStore
+import pony.tothemoon.battletimer.event.EventLogger
+import pony.tothemoon.battletimer.event.PonyEvent
 import pony.tothemoon.battletimer.extensions.keepScreenOn
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
@@ -87,7 +90,14 @@ fun BattleTimerScreen(
     val context = LocalContext.current
 
     LaunchedEffect(timerUiState) {
-      if (timerUiState is BattleTimerUiState.Finish) UserDataStore.finishBattle()
+      if (timerUiState is BattleTimerUiState.Finish) {
+        UserDataStore.finishBattle()
+
+        EventLogger.log(PonyEvent.FINISH_TIMER, bundleOf(
+          "type" to "battle",
+          "time" to timerInfo.time
+        ))
+      }
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -122,8 +132,14 @@ fun BattleTimerScreen(
         onClickOk = {
           showExitDialog = false
           showExitScreen = true
+
           AlarmUtils.cancelAlarm(context, timerInfo.id)
           NotificationUtils.removeNotification(context, timerInfo.id)
+          EventLogger.log(PonyEvent.CANCEL_TIMER, bundleOf(
+            "type" to "battle",
+            "time" to timerInfo.time,
+            "duration" to timerInfo.time - timerUiState.time
+          ))
         },
         onClickCancel = { showExitDialog = false },
       )
@@ -170,6 +186,10 @@ fun BattleTimerScreen(
             timerInfo.title,
             AndroidUtils.string(R.string.timer_noti_start_sub_title)
           )
+          EventLogger.log(PonyEvent.START_TIMER, bundleOf(
+            "type" to "battle",
+            "time" to timerInfo.time
+          ))
         },
         onCancel = { onBack() },
         onFinish = {
