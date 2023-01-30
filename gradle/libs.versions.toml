@@ -14,6 +14,7 @@ compose-viewmodel = "2.5.1"
 compose-navigation = "2.5.3"
 
 firebase = "31.2.0"
+admob = "21.4.0"
 
 datastore = "1.0.0"
 
@@ -50,6 +51,7 @@ firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlyti
 firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-analytics-ktx" }
+admob = { module = "com.google.android.gms:play-services-ads", version.ref = "admob" }
 
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
