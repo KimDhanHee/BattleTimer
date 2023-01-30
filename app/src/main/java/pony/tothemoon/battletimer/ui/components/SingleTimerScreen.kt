@@ -1,6 +1,7 @@
 package pony.tothemoon.battletimer.ui.components
 
 import android.content.Intent
+import android.util.EventLog
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,10 +35,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import pony.tothemoon.battletimer.R
+import pony.tothemoon.battletimer.event.EventLogger
+import pony.tothemoon.battletimer.event.PonyEvent
 import pony.tothemoon.battletimer.extensions.keepScreenOn
 import pony.tothemoon.battletimer.extensions.onLifecycleEvent
 import pony.tothemoon.battletimer.model.TimerInfo
@@ -68,6 +73,8 @@ fun SingleTimerScreen(
     }
   }
 
+  val timerUiState = viewmodel.timerUiState
+
   var showDialog by remember { mutableStateOf(false) }
   if (showDialog) {
     ConfirmDialog(
@@ -78,9 +85,18 @@ fun SingleTimerScreen(
         showDialog = false
 
         AlarmUtils.cancelAlarm(context, timerInfo.id)
+
         viewmodel.dismiss()
+
         cancel(navController)
+
         NotificationUtils.removeNotification(context, timerInfo.id)
+
+        EventLogger.log(PonyEvent.CANCEL_TIMER, bundleOf(
+          "type" to "single",
+          "time" to timerInfo.time,
+          "duration" to timerInfo.time - timerUiState.time
+        ))
       },
       onClickCancel = {
         showDialog = false
@@ -88,7 +104,14 @@ fun SingleTimerScreen(
     )
   }
 
-  val timerUiState = viewmodel.timerUiState
+  LaunchedEffect(timerUiState) {
+    if (timerUiState is SingleTimerUiState.Finish) {
+      EventLogger.log(PonyEvent.FINISH_TIMER, bundleOf(
+        "type" to "single",
+        "time" to timerInfo.time
+      ))
+    }
+  }
 
   val onBack = {
     when {
@@ -111,13 +134,20 @@ fun SingleTimerScreen(
       timerUiState = timerUiState,
       onClickStart = {
         viewmodel.start()
+
         AlarmUtils.setAlarm(context, timerInfo.copy(remainedTime = timerUiState.time))
+
         NotificationUtils.notify(
           context,
           timerInfo.id,
           timerInfo.title,
           AndroidUtils.string(R.string.timer_noti_start_sub_title)
         )
+
+        EventLogger.log(PonyEvent.START_TIMER, bundleOf(
+          "type" to "single",
+          "time" to timerInfo.time
+        ))
       },
       onClickPause = {
         viewmodel.pause()
