@@ -162,7 +162,8 @@ fun BattleTimerScreen(
     Column(
       modifier = Modifier
         .fillMaxSize()
-        .background(color = Gray100),
+        .background(color = Gray100)
+        .padding(bottom = 50.dp),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Header(text = timerInfo.title, onClickBack = { onBack() })
@@ -374,7 +375,7 @@ private fun ProgressIndicator(
     Text(
       text = progressText,
       modifier = Modifier
-        .padding(vertical = 32.dp)
+        .padding(vertical = 20.dp)
         .fillMaxWidth(),
       color = timerColor,
       textAlign = TextAlign.Center,
@@ -394,7 +395,7 @@ private fun ProgressIndicator(
       color = timerColor,
       trackColor = White900
     )
-    Spacer(modifier = Modifier.size(48.dp))
+    Spacer(modifier = Modifier.size(36.dp))
     Text(
       text = label,
       color = textColor,

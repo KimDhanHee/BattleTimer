@@ -10,7 +10,7 @@ import pony.tothemoon.battletimer.R
 
 val Typography = Typography(
   displayLarge = TextStyle(
-    fontSize = 60.sp,
+    fontSize = 48.sp,
     fontWeight = FontWeight.SemiBold,
     fontFamily = FontFamily(
       Font(R.font.rajdhani, FontWeight.SemiBold)

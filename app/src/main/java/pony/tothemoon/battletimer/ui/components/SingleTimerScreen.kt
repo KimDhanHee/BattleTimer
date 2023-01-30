@@ -127,6 +127,7 @@ fun SingleTimerScreen(
     modifier = Modifier
       .fillMaxSize()
       .background(color = Gray100)
+      .padding(bottom = 50.dp)
   ) {
     Header(text = timerInfo.title, onClickBack = { onBack() })
     Body(

@@ -4,20 +4,27 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import pony.tothemoon.battletimer.datastore.TimerDataStore
@@ -70,47 +77,68 @@ class MainActivity : ComponentActivity() {
           }
         }
 
-        NavHost(navController, startDestination = TimerDestination.TimerList.route) {
-          composable(
-            route = TimerDestination.TimerList.route,
-          ) { navBackStackEntry ->
-            window.statusBarColor = Color.WHITE
+        BattleTimerNavHost(navController)
 
-            val isCancel by navBackStackEntry.savedStateHandle
-              .getStateFlow(TimerDestination.TimerList.KEY_IS_CANCEL, false)
-              .collectAsState()
-            TimerListScreen(
-              isCancel = isCancel,
-              onClickTimer = { timerInfo ->
-                navController.navigateToSingleTop("${TimerDestination.SingleTimer.route}/$timerInfo")
-              },
-              onClickBattle = { timerInfo ->
-                navController.navigateToSingleTop("${TimerDestination.BattleTimer.route}/$timerInfo")
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+          val adRequest = AdRequest.Builder().build()
+          AndroidView(
+            factory = { context ->
+              AdView(context).apply {
+                setAdSize(AdSize.BANNER)
+                adUnitId = "ca-app-pub-9030233517069457/6483728270"
+              }.also {
+                it.loadAd(adRequest)
               }
-            )
-          }
-          composable(
-            route = TimerDestination.BattleTimer.routeWithArgs,
-            arguments = TimerDestination.BattleTimer.arguments
-          ) { navBackStackEntry ->
-            window.statusBarColor = Gray100.toArgb()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            update = { adView -> adView.loadAd(adRequest) }
+          )
+        }
+      }
+    }
+  }
 
-            navBackStackEntry.arguments?.getString(TimerDestination.BattleTimer.timerInfoArg)?.let {
-              val timerInfo: TimerInfo = Json.decodeFromString(it)
-              BattleTimerScreen(timerInfo, navController)
-            }
-          }
-          composable(
-            route = TimerDestination.SingleTimer.routeWithArgs,
-            arguments = TimerDestination.SingleTimer.arguments
-          ) { navBackStackEntry ->
-            window.statusBarColor = Gray100.toArgb()
+  @Composable
+  private fun BattleTimerNavHost(navController: NavHostController) {
+    NavHost(navController, startDestination = TimerDestination.TimerList.route) {
+      composable(
+        route = TimerDestination.TimerList.route,
+      ) { navBackStackEntry ->
+        window.statusBarColor = Color.WHITE
 
-            navBackStackEntry.arguments?.getString(TimerDestination.SingleTimer.timerInfoArg)?.let {
-              val timerInfo: TimerInfo = Json.decodeFromString(it)
-              SingleTimerScreen(timerInfo, navController)
-            }
+        val isCancel by navBackStackEntry.savedStateHandle
+          .getStateFlow(TimerDestination.TimerList.KEY_IS_CANCEL, false)
+          .collectAsState()
+        TimerListScreen(
+          isCancel = isCancel,
+          onClickTimer = { timerInfo ->
+            navController.navigateToSingleTop("${TimerDestination.SingleTimer.route}/$timerInfo")
+          },
+          onClickBattle = { timerInfo ->
+            navController.navigateToSingleTop("${TimerDestination.BattleTimer.route}/$timerInfo")
           }
+        )
+      }
+      composable(
+        route = TimerDestination.BattleTimer.routeWithArgs,
+        arguments = TimerDestination.BattleTimer.arguments
+      ) { navBackStackEntry ->
+        window.statusBarColor = Gray100.toArgb()
+
+        navBackStackEntry.arguments?.getString(TimerDestination.BattleTimer.timerInfoArg)?.let {
+          val timerInfo: TimerInfo = Json.decodeFromString(it)
+          BattleTimerScreen(timerInfo, navController)
+        }
+      }
+      composable(
+        route = TimerDestination.SingleTimer.routeWithArgs,
+        arguments = TimerDestination.SingleTimer.arguments
+      ) { navBackStackEntry ->
+        window.statusBarColor = Gray100.toArgb()
+
+        navBackStackEntry.arguments?.getString(TimerDestination.SingleTimer.timerInfoArg)?.let {
+          val timerInfo: TimerInfo = Json.decodeFromString(it)
+          SingleTimerScreen(timerInfo, navController)
         }
       }
     }
