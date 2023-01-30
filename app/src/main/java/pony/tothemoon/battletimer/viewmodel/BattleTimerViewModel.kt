@@ -86,9 +86,9 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   fun start() {
     viewModelScope.launch {
       if (timerUiState is BattleTimerUiState.Idle || timerUiState is BattleTimerUiState.Finish) {
-        loading()
-
         battleTimer = battleTimer.copy(title = newRandomUser, time = timerInfo.time)
+
+        loading()
 
         countdown()
 
