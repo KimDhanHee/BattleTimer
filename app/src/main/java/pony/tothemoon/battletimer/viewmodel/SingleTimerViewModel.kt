@@ -1,15 +1,13 @@
 package pony.tothemoon.battletimer.viewmodel
 
+import android.os.CountDownTimer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
@@ -18,8 +16,6 @@ import pony.tothemoon.battletimer.model.TimerInfo
 class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   var timerUiState: SingleTimerUiState by mutableStateOf(SingleTimerUiState.Idle(timerInfo.remainedTime))
     private set
-
-  private var timerJob: Job? = null
 
   init {
     when (timerInfo.state) {
@@ -32,19 +28,22 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     }
   }
 
+  private var timer: CountDownTimer? = null
   fun start() {
-    timerJob = viewModelScope.launch {
-      while (timerUiState.time > 0) {
-        timerUiState = SingleTimerUiState.Running(timerUiState.time - 100)
-        delay(100)
+    val timeTick = 100L
+    timer = object : CountDownTimer(timerUiState.time, timeTick) {
+      override fun onTick(remainedTime: Long) {
+        timerUiState = SingleTimerUiState.Running(timerUiState.time - timeTick)
       }
 
-      timerUiState = SingleTimerUiState.Finish(0)
-    }
+      override fun onFinish() {
+        timerUiState = SingleTimerUiState.Finish(0)
+      }
+    }.start()
   }
 
   fun pause() {
-    timerJob?.cancel()
+    timer?.cancel()
     timerUiState = SingleTimerUiState.Pause(timerUiState.time)
   }
 
@@ -73,6 +72,9 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   }
 
   fun clear() {
+    timer?.cancel()
+    timer = null
+
     CoroutineScope(Dispatchers.IO).launch {
       TimerDataStore.clear()
     }
