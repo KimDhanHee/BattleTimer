@@ -149,9 +149,12 @@ fun BattleTimerScreen(
     val onBack = {
       when (timerUiState) {
         is BattleTimerUiState.Idle -> cancel(navController)
-        is BattleTimerUiState.Finish -> when {
-          needToDisplayFeedback -> showFeedbackDialog = true
-          else -> reset(navController)
+        is BattleTimerUiState.Finish -> {
+          NotificationUtils.removeNotification(context, timerInfo.id)
+          when {
+            needToDisplayFeedback -> showFeedbackDialog = true
+            else -> reset(navController)
+          }
         }
         else -> showExitDialog = true
       }
@@ -196,7 +199,6 @@ fun BattleTimerScreen(
         onFinish = {
           onBack()
           context.stopService(Intent(context, TimerService::class.java))
-          NotificationUtils.removeNotification(context, timerInfo.id)
         },
       )
     }
