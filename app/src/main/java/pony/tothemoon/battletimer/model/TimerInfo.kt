@@ -29,6 +29,7 @@ data class TimerInfo(
     IDLE,
     RUNNING,
     PAUSE,
+    FINISH,
     ;
   }
 }

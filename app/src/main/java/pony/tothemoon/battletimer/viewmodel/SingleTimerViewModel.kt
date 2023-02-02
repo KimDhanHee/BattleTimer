@@ -26,7 +26,9 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
       TimerInfo.State.RUNNING -> start()
       TimerInfo.State.PAUSE ->
         timerUiState = SingleTimerUiState.Pause(timerInfo.remainedTime)
-      TimerInfo.State.IDLE -> Unit
+      TimerInfo.State.FINISH ->
+        timerUiState = SingleTimerUiState.Finish(0)
+      else -> Unit
     }
   }
 
@@ -54,19 +56,18 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   fun save() {
     if (timerUiState.isActive) {
       CoroutineScope(Dispatchers.IO).launch {
-        TimerDataStore.save(
-          ActiveTimer(
-            isBattle = false,
-            _timerInfo = timerInfo.copy(
-              remainedTime = timerUiState.time,
-              state = when (timerUiState) {
-                is SingleTimerUiState.Running -> TimerInfo.State.RUNNING
-                is SingleTimerUiState.Pause -> TimerInfo.State.PAUSE
-                else -> TimerInfo.State.IDLE
-              }
-            )
+        val current = ActiveTimer(
+          isBattle = false,
+          _timerInfo = timerInfo.copy(
+            remainedTime = timerUiState.time,
+            state = when (timerUiState) {
+              is SingleTimerUiState.Running -> TimerInfo.State.RUNNING
+              is SingleTimerUiState.Pause -> TimerInfo.State.PAUSE
+              else -> TimerInfo.State.IDLE
+            }
           )
         )
+        TimerDataStore.save(current)
       }
     }
   }
@@ -84,7 +85,7 @@ sealed class SingleTimerUiState {
   data class Pause(override val time: Long) : SingleTimerUiState()
   data class Finish(override val time: Long) : SingleTimerUiState()
 
-  val isActive: Boolean get() = this is Running || this is Pause
+  val isActive: Boolean get() = this !is Idle
   abstract val time: Long
 }
 
