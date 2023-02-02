@@ -259,11 +259,10 @@ private fun Body(
     )
 
     if (timerUiState.displayBattle) {
-      val battleTime by remember { mutableStateOf(battleTimer.time) }
       val displayWin =
         timerUiState is BattleTimerUiState.Running && timerUiState.hasWin || timerUiState is BattleTimerUiState.Finish
       ProgressIndicator(
-        progress = battleTimer.remainedTime / battleTime.toFloat(),
+        progress = battleTimer.remainedTime / battleTimer.time.toFloat(),
         progressText = when (timerUiState) {
           is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_lose)
           else -> battleTimer.remainedTime.timeStr
