@@ -78,22 +78,7 @@ class MainActivity : ComponentActivity() {
         }
 
         BattleTimerNavHost(navController)
-
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-          val adRequest = AdRequest.Builder().build()
-          AndroidView(
-            factory = { context ->
-              AdView(context).apply {
-                setAdSize(AdSize.BANNER)
-                adUnitId = "ca-app-pub-9030233517069457/6483728270"
-              }.also {
-                it.loadAd(adRequest)
-              }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            update = { adView -> adView.loadAd(adRequest) }
-          )
-        }
+        Advertise()
       }
     }
   }
@@ -141,6 +126,25 @@ class MainActivity : ComponentActivity() {
           SingleTimerScreen(timerInfo, navController)
         }
       }
+    }
+  }
+
+  @Composable
+  private fun Advertise() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+      val adRequest = AdRequest.Builder().build()
+      AndroidView(
+        factory = { context ->
+          AdView(context).apply {
+            setAdSize(AdSize.BANNER)
+            adUnitId = "ca-app-pub-9030233517069457/6483728270"
+          }.also {
+            it.loadAd(adRequest)
+          }
+        },
+        modifier = Modifier.fillMaxWidth(),
+        update = { adView -> adView.loadAd(adRequest) }
+      )
     }
   }
 }
