@@ -155,6 +155,7 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
   fun clear() {
     timer?.cancel()
+    timer = null
 
     CoroutineScope(Dispatchers.IO).launch {
       TimerDataStore.clear()
