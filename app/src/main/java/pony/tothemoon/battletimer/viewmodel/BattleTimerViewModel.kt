@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,9 @@ import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
+import pony.tothemoon.battletimer.datastore.UserDataStore
+import pony.tothemoon.battletimer.event.EventLogger
+import pony.tothemoon.battletimer.event.PonyEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.utils.AndroidUtils
 
@@ -25,7 +29,8 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   var battleTimer by mutableStateOf(
     TimerInfo(
       title = newRandomUser,
-      time = timerInfo.remainedTime
+      remainedTime = timerInfo.remainedTime,
+      time = timerInfo.time
     )
   )
     private set
@@ -35,7 +40,7 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
   init {
     when (timerInfo.state) {
-      TimerInfo.State.RUNNING -> viewModelScope.launch { startBattle() }
+      TimerInfo.State.RUNNING -> startBattle()
       TimerInfo.State.FINISH -> finish()
       else -> Unit
     }
@@ -98,7 +103,6 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     )
     var encourageTextRes: Int = encourageTextResArray.random()
 
-    timer?.cancel()
     timer = object : CountDownTimer(timerUiState.time, timeTick) {
       override fun onTick(remainedTime: Long) {
         val hasWin = remainedTime < winningTime
@@ -127,11 +131,23 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
   private fun finish() {
     timerUiState = BattleTimerUiState.Finish(0)
+
+    viewModelScope.launch { UserDataStore.finishBattle() }
+
     clear()
+
+    EventLogger.log(PonyEvent.FINISH_TIMER, bundleOf(
+      "type" to "battle",
+      "time" to timerInfo.time
+    ))
   }
 
   fun cancel() {
     timerUiState = BattleTimerUiState.Idle(timerInfo.time)
+
+    timer?.cancel()
+    timer = null
+
     clear()
   }
 
@@ -142,10 +158,7 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
           isBattle = true,
           _timerInfo = timerInfo.copy(
             remainedTime = timerUiState.time,
-            state = when (timerUiState) {
-              is BattleTimerUiState.Running -> TimerInfo.State.RUNNING
-              else -> TimerInfo.State.IDLE
-            }
+            state = TimerInfo.State.RUNNING
           )
         )
         TimerDataStore.save(current)
@@ -153,10 +166,7 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     }
   }
 
-  fun clear() {
-    timer?.cancel()
-    timer = null
-
+  private fun clear() {
     CoroutineScope(Dispatchers.IO).launch {
       TimerDataStore.clear()
     }

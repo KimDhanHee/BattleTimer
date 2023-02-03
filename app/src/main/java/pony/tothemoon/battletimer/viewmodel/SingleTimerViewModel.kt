@@ -31,6 +31,8 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   private var timer: CountDownTimer? = null
   fun start() {
     val timeTick = 100L
+
+    timer?.cancel()
     timer = object : CountDownTimer(timerUiState.time, timeTick) {
       override fun onTick(remainedTime: Long) {
         timerUiState = SingleTimerUiState.Running(timerUiState.time - timeTick)
@@ -44,6 +46,8 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
   fun pause() {
     timer?.cancel()
+    timer = null
+
     timerUiState = SingleTimerUiState.Pause(timerUiState.time)
   }
 
@@ -71,10 +75,7 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     }
   }
 
-  fun clear() {
-    timer?.cancel()
-    timer = null
-
+  private fun clear() {
     CoroutineScope(Dispatchers.IO).launch {
       TimerDataStore.clear()
     }
