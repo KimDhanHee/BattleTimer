@@ -266,6 +266,8 @@ private fun Body(
         },
         label = when {
           displayWin -> stringResource(id = R.string.battle_timer_other_left, battleTimer.title)
+          timerUiState is BattleTimerUiState.Running ->
+            stringResource(id = R.string.timer_list_battle_timer_title, battleTimer.title)
           else -> ""
         },
         modifier = Modifier
