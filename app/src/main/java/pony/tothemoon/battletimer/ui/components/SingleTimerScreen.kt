@@ -1,7 +1,6 @@
 package pony.tothemoon.battletimer.ui.components
 
 import android.content.Intent
-import android.util.EventLog
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -66,11 +65,7 @@ fun SingleTimerScreen(
   val context = LocalContext.current
 
   onLifecycleEvent { event ->
-    when (event) {
-      Lifecycle.Event.ON_CREATE -> viewmodel.clear()
-      Lifecycle.Event.ON_PAUSE -> viewmodel.save()
-      else -> Unit
-    }
+    if (event == Lifecycle.Event.ON_PAUSE) viewmodel.save()
   }
 
   val timerUiState = viewmodel.timerUiState
@@ -88,7 +83,7 @@ fun SingleTimerScreen(
 
         viewmodel.dismiss()
 
-        cancel(navController)
+        cancelTimer(navController)
 
         NotificationUtils.removeNotification(context, timerInfo.id)
 
@@ -116,8 +111,8 @@ fun SingleTimerScreen(
   val onBack = {
     when {
       timerUiState.isActive -> showDialog = true
-      timerUiState is SingleTimerUiState.Idle -> cancel(navController)
-      timerUiState is SingleTimerUiState.Finish -> reset(navController)
+      timerUiState is SingleTimerUiState.Idle -> cancelTimer(navController)
+      timerUiState is SingleTimerUiState.Finish -> resetCanceled(navController)
     }
   }
 
@@ -165,14 +160,14 @@ fun SingleTimerScreen(
   }
 }
 
-private fun cancel(navController: NavHostController) {
+private fun cancelTimer(navController: NavHostController) {
   navController.previousBackStackEntry
     ?.savedStateHandle
     ?.set(TimerDestination.TimerList.KEY_IS_CANCEL, true)
   navController.navigateUp()
 }
 
-private fun reset(navController: NavHostController) {
+private fun resetCanceled(navController: NavHostController) {
   navController.previousBackStackEntry
     ?.savedStateHandle
     ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)

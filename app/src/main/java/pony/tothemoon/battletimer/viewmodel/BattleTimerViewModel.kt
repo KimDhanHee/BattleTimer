@@ -1,9 +1,11 @@
 package pony.tothemoon.battletimer.viewmodel
 
+import android.os.CountDownTimer
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,6 +16,9 @@ import kotlinx.coroutines.launch
 import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
+import pony.tothemoon.battletimer.datastore.UserDataStore
+import pony.tothemoon.battletimer.event.EventLogger
+import pony.tothemoon.battletimer.event.PonyEvent
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.utils.AndroidUtils
 
@@ -24,7 +29,8 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   var battleTimer by mutableStateOf(
     TimerInfo(
       title = newRandomUser,
-      time = timerInfo.remainedTime
+      remainedTime = timerInfo.remainedTime,
+      time = timerInfo.time
     )
   )
     private set
@@ -33,12 +39,52 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     private set
 
   init {
-    if (timerInfo.state == TimerInfo.State.RUNNING) {
-      viewModelScope.launch { startBattle() }
+    when (timerInfo.state) {
+      TimerInfo.State.RUNNING -> startBattle()
+      TimerInfo.State.FINISH -> finish()
+      else -> Unit
     }
   }
 
-  private suspend fun startBattle() {
+  fun start() {
+    viewModelScope.launch {
+      if (timerUiState is BattleTimerUiState.Idle || timerUiState is BattleTimerUiState.Finish) {
+        init()
+
+        loading()
+
+        countdown()
+
+        startBattle()
+      }
+    }
+  }
+
+  private fun init() {
+    battleTimer = battleTimer.copy(title = newRandomUser, time = timerInfo.remainedTime)
+  }
+
+  private suspend fun loading() {
+    val loadingTextRes = arrayOf(
+      R.string.battle_timer_loading_search,
+      R.string.battle_timer_loading_enter,
+      R.string.battle_timer_loading_end
+    )
+    loadingTextRes.forEach { textRes ->
+      timerUiState = BattleTimerUiState.Loading(timerInfo.time, textRes)
+      delay(2000)
+    }
+  }
+
+  private suspend fun countdown() {
+    repeat(3) {
+      timerUiState = BattleTimerUiState.Ready(timerUiState.time, 3 - it)
+      delay(TimerInfo.SECONDS_UNIT)
+    }
+  }
+
+  private var timer: CountDownTimer? = null
+  private fun startBattle() {
     val winningTime = (10 * TimerInfo.SECONDS_UNIT until 50 * TimerInfo.SECONDS_UNIT).random()
     val timeTick = 100L
     val encourageTextResArray = arrayOf(
@@ -57,90 +103,70 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     )
     var encourageTextRes: Int = encourageTextResArray.random()
 
-    while (timerUiState.time > 0) {
-      delay(timeTick)
+    timer = object : CountDownTimer(timerUiState.time, timeTick) {
+      override fun onTick(remainedTime: Long) {
+        val hasWin = remainedTime < winningTime
+        val changeEncourage = (remainedTime / timeTick % timeTick) == 0L
 
-      val remainedTime = timerUiState.time - timeTick
-      val hasWin = remainedTime < winningTime
-      val changeEncourage = (remainedTime / timeTick % timeTick) == 0L
+        if (changeEncourage) {
+          encourageTextRes = encourageTextResArray.random()
+        }
 
-      if (changeEncourage) {
-        encourageTextRes = encourageTextResArray.random()
+        timerUiState = BattleTimerUiState.Running(
+          time = remainedTime,
+          hasWin = hasWin,
+          textRes = encourageTextRes
+        )
+
+        if (!hasWin) {
+          battleTimer = battleTimer.copy(remainedTime = remainedTime)
+        }
       }
 
-      timerUiState = BattleTimerUiState.Running(
-        time = remainedTime,
-        hasWin = hasWin,
-        textRes = encourageTextRes
-      )
-
-      if (!hasWin) {
-        battleTimer = battleTimer.copy(remainedTime = remainedTime)
+      override fun onFinish() {
+        finish()
       }
-    }
+    }.start()
+  }
 
-    timerUiState = BattleTimerUiState.Finish(timerUiState.time)
+  private fun finish() {
+    timerUiState = BattleTimerUiState.Finish(0)
+
+    viewModelScope.launch { UserDataStore.finishBattle() }
+
     clear()
-  }
 
-  fun start() {
-    viewModelScope.launch {
-      if (timerUiState is BattleTimerUiState.Idle || timerUiState is BattleTimerUiState.Finish) {
-        battleTimer = battleTimer.copy(title = newRandomUser, time = timerInfo.time)
-
-        loading()
-
-        countdown()
-
-        startBattle()
-      }
-    }
-  }
-
-  private suspend fun loading() {
-    val loadingTextRes = arrayOf(
-      R.string.battle_timer_loading_search,
-      R.string.battle_timer_loading_enter,
-      R.string.battle_timer_loading_end
-    )
-    loadingTextRes.forEach { textRes ->
-      timerUiState = BattleTimerUiState.Loading(timerInfo.time, textRes)
-      delay(2000)
-    }
-  }
-
-  private suspend fun countdown() {
-    repeat(3) {
-      delay(TimerInfo.SECONDS_UNIT)
-      timerUiState = BattleTimerUiState.Ready(timerUiState.time, 3 - it)
-    }
+    EventLogger.log(PonyEvent.FINISH_TIMER, bundleOf(
+      "type" to "battle",
+      "time" to timerInfo.time
+    ))
   }
 
   fun cancel() {
     timerUiState = BattleTimerUiState.Idle(timerInfo.time)
+
+    timer?.cancel()
+    timer = null
+
     clear()
   }
 
   fun save() {
-    if (timerUiState is BattleTimerUiState.Running) {
+    if (timerUiState.isRunning) {
       CoroutineScope(Dispatchers.IO).launch {
-        TimerDataStore.save(
-          ActiveTimer(
-            isBattle = true,
-            _timerInfo = timerInfo.copy(
-              remainedTime = timerUiState.time,
-              state = when (timerUiState) {
-                is BattleTimerUiState.Running -> TimerInfo.State.RUNNING
-                else -> TimerInfo.State.IDLE
-              }
-            )
+        val current = ActiveTimer(
+          isBattle = true,
+          _timerInfo = timerInfo.copy(
+            remainedTime = timerUiState.time,
+            state = TimerInfo.State.RUNNING
           )
         )
+        TimerDataStore.save(current)
       }
     }
   }
 
-  fun clear() {
+  private fun clear() {
     CoroutineScope(Dispatchers.IO).launch {
       TimerDataStore.clear()
     }
@@ -163,6 +189,9 @@ sealed class BattleTimerUiState {
 
   val displayBattle: Boolean
     get() = this is Running || this is Finish
+
+  val isRunning: Boolean
+    get() = this is Loading || this is Ready || this is Running
 }
 
 class BattleTimerViewModelFactory(

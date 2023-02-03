@@ -52,7 +52,7 @@ object NotificationUtils {
     )
     .build()
 
-  fun removeNotification(context: Context, timerId: Int) {
-    context.notificationManager.cancel(timerId)
+  fun removeNotification(context: Context, id: Int) {
+    context.notificationManager.cancel(id)
   }
 }

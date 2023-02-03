@@ -53,6 +53,10 @@ data class ActiveTimer(
     get() {
       val remainedTime =
         max(0, _timerInfo.remainedTime - (System.currentTimeMillis() - lastRunningTime))
-      return _timerInfo.copy(remainedTime = remainedTime)
+      val state = when (remainedTime) {
+        0L -> TimerInfo.State.FINISH
+        else -> TimerInfo.State.RUNNING
+      }
+      return _timerInfo.copy(remainedTime = remainedTime, state = state)
     }
 }
