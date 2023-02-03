@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">배틀 타이머</string>
+  <string name="timer_list_single_timer">싱글 타이머</string>
+  <string name="timer_list_battle_timer">배틀 타이머</string>
+  <string name="minute_3_timer">💡 3분 타이머</string>
+  <string name="minute_5_timer">💡 5분 타이머</string>
+  <string name="minute_10_timer">💡 10분 타이머</string>
+  <string name="minute_15_timer">🍅 15분 타이머</string>
+  <string name="minute_25_timer">🍅 25분 타이머</string>
+  <string name="minute_50_timer">🎯 50분 타이머</string>
+  <string name="timer_list_battle_timer_title">%s 님이 집중하고 있어요 🔥</string>
+  <string name="battle_timer_bottom_description">"가볍게 시작해 보세요"</string>
+  <string name="battle_timer_button_start">배틀 시작하기</string>
+  <string name="battle_timer_button_giveup">포기하기</string>
+  <string name="battle_timer_button_one_more">한번 더 하기</string>
+  <string name="battle_timer_button_finish">종료하기</string>
+  <string name="battle_timer_loading_search">"🔍\n상대방을 찾고 있어요.. "</string>
+  <string name="battle_timer_loading_enter">👋\n%s 님이 입장했어요</string>
+  <string name="battle_timer_loading_end">🤜 🤛\n%s 님과 배틀이 시작됩니다</string>
+  <string name="battle_timer_exit_title">"먼저 마무리 하시겠어요? "</string>
+  <string name="battle_timer_exit_positive">그만할래</string>
+  <string name="battle_timer_exit_negative">다시 30초만 더 해볼게</string>
+  <string name="battle_timer_encourage_1">집중! 집중!</string>
+  <string name="battle_timer_encourage_2">집중이 깨졌나요? 다시 10초만 집중해봐요</string>
+  <string name="battle_timer_encourage_3">화면을 보지 말고 다시 집중하세요</string>
+  <string name="battle_timer_encourage_4">하기 싫을 일을 한다는건 정말 대단한 일이에요</string>
+  <string name="battle_timer_encourage_5">끝까지만 하면 이기는거에요 </string>
+  <string name="battle_timer_encourage_6">힘내세요! 할 수 있어요!</string>
+  <string name="battle_timer_encourage_7">심각하게 생각하지 마세요</string>
+  <string name="battle_timer_encourage_8">무슨 생각을 해.. 그냥 하는거지 - 김연아</string>
+  <string name="battle_timer_encourage_9">하기 싫은 일을 해낼 때 성공은 따라오는 법</string>
+  <string name="battle_timer_encourage_10">모든 성취는 하기 싫은 마음을 다스리는 데서 시작됩니다 </string>
+  <string name="battle_timer_encourage_11">천리길도 한걸음부터</string>
+  <string name="battle_timer_encourage_12">작은 물방울이 바위를 뚫는다!</string>
+  <string name="battle_timer_good_job">수고했어요! 🎉</string>
+  <string name="battle_timer_other_left">%s 님이 퇴장 하셨습니다 </string>
+  <string name="battle_timer_exit_encourage">다음에는 더 잘할거에요\n또 만나요 ☺️</string>
+  <string name="battle_timer_feedback_title">배틀 타이머가 더 발전할 수 있게 의견을 부탁드려요</string>
+  <string name="battle_timer_feedback_positive">좋아요</string>
+  <string name="battle_timer_feedback_negative">다음에</string>
+  <string name="single_timer_exit_title">종료하시겠습니까?</string>
+  <string name="single_timer_exit_positive">예</string>
+  <string name="single_timer_exit_negative">아니오</string>
+  <string name="single_timer_finish">타이머 종료</string>
+  <string name="single_timer_button_dismiss">해제</string>
+  <string name="timer_noti_start_sub_title">타이머가 실행 중 입니다</string>
+  <string name="timer_noti_end_sub_title">타이머가 완료되었습니다</string>
+  <string-array name="random_users">
+    <item>귀여운 아벨군</item>
+    <item>다정한 바꿈터</item>
+    <item>여유로운 파쇄물</item>
+    <item>놀라운 대차료</item>
+    <item>기쁜 종마루</item>
+    <item>신나는 효자손</item>
+    <item>수줍은 아로마</item>
+    <item>깨끗한 인프라</item>
+    <item>오래된 당나라</item>
+    <item>너그러운 파슬리</item>
+    <item>뛰어난 강서파</item>
+    <item>뜨거운 아주미</item>
+    <item>환상적인 선군자</item>
+    <item>다정한 시타르</item>
+    <item>유일한 보다리</item>
+    <item>매콤한 네다리</item>
+    <item>멋진 지라문</item>
+    <item>여유로운 남자애</item>
+    <item>미끄러운 이차파</item>
+    <item>반가운 다자녀</item>
+    <item>보람찬 벚나무</item>
+    <item>부드러운 배타심</item>
+    <item>뽀얀 노벨라</item>
+    <item>수줍은 대상자</item>
+    <item>놀라운 가짓수</item>
+    <item>고단한 떡다리</item>
+    <item>수줍은 마옥리</item>
+    <item>아름다운 하마평</item>
+    <item>다정한 나무살</item>
+    <item>귀찮은 아연괴</item>
+    <item>익은 식당차</item>
+    <item>대중적인 개승마</item>
+    <item>잘생긴 횡파형</item>
+    <item>젊은 화라기</item>
+    <item>점잖은 바로잉</item>
+    <item>애매한 팔준마</item>
+    <item>즐거운 카파크</item>
+    <item>긴장한 덤바둑</item>
+    <item>지혜로운 시행사</item>
+    <item>푸른 살리나</item>
+    <item>낙천적인 피아간</item>
+    <item>똑똑한 드로아</item>
+    <item>상냥한 살수차</item>
+    <item>희망찬 나뭇독</item>
+    <item>고운 교사상</item>
+    <item>달콤한 자신경</item>
+    <item>기쁜 보타산</item>
+    <item>어지러운 아연광</item>
+    <item>깊은 만사리</item>
+    <item>유쾌한 투자층</item>
+    <item>단단한 럽다운</item>
+    <item>명랑한 하평성</item>
+    <item>산뜻한 유암나</item>
+    <item>진지한 타우린</item>
+    <item>깨끗한 광나루</item>
+    <item>너그러운 나무색</item>
+    <item>유쾌한 나마시</item>
+    <item>널따란 파이핑</item>
+    <item>뛰어난 하이커</item>
+    <item>반가운 바람목</item>
+    <item>우월한 북학파</item>
+    <item>보드라운 유하주</item>
+    <item>빠른 꽃나물</item>
+    <item>유일한 송라립</item>
+    <item>놀라운 호라즘</item>
+    <item>새로운 자씨존</item>
+    <item>수줍은 대다리</item>
+    <item>희망찬 저평가</item>
+    <item>올바른 부자유</item>
+    <item>유쾌한 가도관</item>
+    <item>밝은 하시리</item>
+    <item>잘생긴 미라화</item>
+    <item>매력있는 바다삵</item>
+    <item>내적인 잇자국</item>
+    <item>점잖은 바스라</item>
+    <item>가파른 아들딸</item>
+    <item>솔직한 카이텔</item>
+    <item>내적인 사업장</item>
+    <item>화려한 부라질</item>
+    <item>어린 일차근</item>
+    <item>굳은 마그넷</item>
+    <item>고마운 빙점하</item>
+    <item>마른 타심통</item>
+    <item>무거운 나무르</item>
+    <item>안전한 독자성</item>
+    <item>기쁜 디카스</item>
+    <item>독창적인 사계화</item>
+    <item>쾌적한 오라범</item>
+    <item>너그러운 빗자루</item>
+    <item>널따란 파압계</item>
+    <item>바람직한 마당비</item>
+    <item>보드라운 하복부</item>
+    <item>수줍은 다원론</item>
+    <item>쾌적한 풋나무</item>
+    <item>고마운 고립아</item>
+    <item>쏜살같은 뼈나이</item>
+    <item>여유로운 나사림</item>
+    <item>고독한 교부자</item>
+    <item>기쁜 부양자</item>
+    <item>잘빠진 사죄경</item>
+  </string-array>
+</resources>
