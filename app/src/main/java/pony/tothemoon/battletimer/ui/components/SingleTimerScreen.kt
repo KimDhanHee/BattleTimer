@@ -122,7 +122,7 @@ fun SingleTimerScreen(
     modifier = Modifier
       .fillMaxSize()
       .background(color = Gray100)
-      .padding(bottom = 50.dp)
+      .padding(bottom = 128.dp)
   ) {
     Header(text = timerInfo.title, onClickBack = { onBack() })
     Body(
@@ -156,7 +156,9 @@ fun SingleTimerScreen(
       },
       modifier = Modifier.weight(1f)
     )
-    Spacer(modifier = Modifier.size(100.dp))
+  }
+  if (timerUiState.isActive) {
+    Advertise()
   }
 }
 
