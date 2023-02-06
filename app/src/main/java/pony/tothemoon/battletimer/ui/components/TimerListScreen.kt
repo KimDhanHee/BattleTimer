@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -25,6 +27,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,7 +55,7 @@ fun TimerListScreen(
 ) {
   LaunchedEffect(isCancel) {
     if (!isCancel) {
-      timerListViewModel.refreshBattleTimer()
+      timerListViewModel.refreshOtherUserTimer()
     }
   }
 
@@ -62,7 +68,7 @@ fun TimerListScreen(
 
     val timerList = timerListViewModel.presetTimers
     TimerList(
-      battleTimer = timerListViewModel.battleTimer,
+      otherUserTimer = timerListViewModel.otherUserTimer,
       timerArray = timerList,
       onClickSingle = onClickTimer,
       onClickBattle = onClickBattle,
@@ -81,19 +87,23 @@ private fun Title(modifier: Modifier = Modifier) {
 
 @Composable
 private fun TimerList(
-  battleTimer: TimerInfo,
+  otherUserTimer: TimerInfo,
   modifier: Modifier = Modifier,
   timerArray: Array<TimerInfo> = emptyArray(),
   onClickSingle: (TimerInfo) -> Unit = {},
   onClickBattle: (TimerInfo) -> Unit = {},
 ) {
+  var showOtherUserTimer by rememberSaveable { mutableStateOf(true) }
+
   LazyColumn(
     modifier = modifier,
     verticalArrangement = Arrangement.spacedBy(8.dp),
     contentPadding = PaddingValues(bottom = 20.dp)
   ) {
-    item {
-      BattleTimer(battleTimer)
+    if (showOtherUserTimer) {
+      item {
+        OtherUserTimer(otherUserTimer, onClickClose = { showOtherUserTimer = false })
+      }
     }
 
     items(timerArray) { timerInfo ->
@@ -119,7 +129,11 @@ private fun TimerList(
 }
 
 @Composable
-private fun BattleTimer(timerInfo: TimerInfo, modifier: Modifier = Modifier) {
+private fun OtherUserTimer(
+  timerInfo: TimerInfo,
+  modifier: Modifier = Modifier,
+  onClickClose: () -> Unit,
+) {
   val infiniteTransition = rememberInfiniteTransition()
   val colorAnim = infiniteTransition.animateColor(
     initialValue = Gray100,
@@ -130,12 +144,36 @@ private fun BattleTimer(timerInfo: TimerInfo, modifier: Modifier = Modifier) {
     )
   ).value
   Card(
-    modifier = modifier
-      .fillMaxWidth(),
+    modifier = modifier.fillMaxWidth(),
     shape = RoundedCornerShape(12.dp),
     colors = CardDefaults.cardColors(containerColor = colorAnim)
   ) {
-    TimerListItemContent(timerInfo, modifier.padding(20.dp))
+    Row(
+      modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Text(
+        text = timerInfo.title,
+        modifier = Modifier.weight(1f),
+        color = Color.White,
+        style = MaterialTheme.typography.bodySmall
+      )
+      Spacer(modifier = Modifier.size(2.dp))
+      Text(
+        text = timerInfo.time.timeStr,
+        color = Color.White,
+        style = MaterialTheme.typography.bodySmall
+      )
+      Spacer(modifier = Modifier.size(4.dp))
+      Icon(
+        imageVector = Icons.Filled.Close,
+        contentDescription = null,
+        modifier = Modifier
+          .size(24.dp)
+          .clickable { onClickClose() },
+        tint = Color.White
+      )
+    }
   }
 }
 
@@ -175,22 +213,5 @@ private fun TimerListItem(
         )
       }
     }
-  }
-}
-
-@Composable
-private fun TimerListItemContent(timerInfo: TimerInfo, modifier: Modifier = Modifier) {
-  Column(modifier = modifier) {
-    Text(
-      text = timerInfo.title,
-      color = Color.White,
-      style = MaterialTheme.typography.bodyMedium
-    )
-    Spacer(modifier = Modifier.size(8.dp))
-    Text(
-      text = timerInfo.time.timeStr,
-      color = Color.White,
-      style = MaterialTheme.typography.bodyLarge
-    )
   }
 }
