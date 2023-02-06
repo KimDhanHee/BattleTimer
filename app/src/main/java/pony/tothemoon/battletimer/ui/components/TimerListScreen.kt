@@ -56,7 +56,7 @@ fun TimerListScreen(
   Column(
     modifier = Modifier
       .fillMaxSize()
-      .padding(start = 20.dp, end = 20.dp, bottom = 50.dp)
+      .padding(start = 20.dp, end = 20.dp)
   ) {
     Title(modifier = Modifier.padding(top = 24.dp, bottom = 30.dp))
 
