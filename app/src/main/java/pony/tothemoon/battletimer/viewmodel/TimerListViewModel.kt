@@ -16,7 +16,7 @@ class TimerListViewModel : ViewModel() {
   private val newRandomUser: String
     get() = AndroidUtils.stringArray(R.array.random_users).random()
 
-  var battleTimer by mutableStateOf(
+  var otherUserTimer by mutableStateOf(
     TimerInfo(
       title = AndroidUtils.string(R.string.timer_list_battle_timer_title, newRandomUser),
       time = 0
@@ -27,25 +27,25 @@ class TimerListViewModel : ViewModel() {
   private var timerJob: Job? = null
 
   init {
-    startBattleTimer()
+    startOtherUserTimer()
   }
 
-  fun refreshBattleTimer() {
-    battleTimer = battleTimer.copy(
+  fun refreshOtherUserTimer() {
+    otherUserTimer = otherUserTimer.copy(
       title = AndroidUtils.string(R.string.timer_list_battle_timer_title, newRandomUser),
       time = 0
     )
-    startBattleTimer()
+    startOtherUserTimer()
   }
 
-  private fun startBattleTimer() {
+  private fun startOtherUserTimer() {
     timerJob?.cancel()
     timerJob = viewModelScope.launch {
       while (true) {
         delay(TimerInfo.SECONDS_UNIT)
         when {
-          battleTimer.time >= 50 * TimerInfo.MINUTE_UNIT -> refreshBattleTimer()
-          else -> battleTimer = battleTimer.copy(time = battleTimer.time + TimerInfo.SECONDS_UNIT)
+          otherUserTimer.time >= 50 * TimerInfo.MINUTE_UNIT -> refreshOtherUserTimer()
+          else -> otherUserTimer = otherUserTimer.copy(time = otherUserTimer.time + TimerInfo.SECONDS_UNIT)
         }
       }
     }

@@ -199,6 +199,10 @@ fun BattleTimerScreen(
       )
     }
 
+    if (timerUiState.isRunning) {
+      Advertise()
+    }
+
     if (timerUiState is BattleTimerUiState.Loading) {
       LoadingScreen(stringResource(id = timerUiState.textRes, viewmodel.battleTimer.title))
     }
