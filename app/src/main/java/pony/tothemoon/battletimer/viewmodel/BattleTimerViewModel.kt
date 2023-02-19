@@ -162,7 +162,6 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     if (timerUiState.isRunning) {
       CoroutineScope(Dispatchers.IO).launch {
         val current = ActiveTimer(
-          isBattle = true,
           _timerInfo = timerInfo.copy(
             remainedTime = timerUiState.time,
             state = TimerInfo.State.RUNNING

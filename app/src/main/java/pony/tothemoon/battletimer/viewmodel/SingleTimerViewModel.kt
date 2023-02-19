@@ -60,7 +60,6 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     if (timerUiState.isActive) {
       CoroutineScope(Dispatchers.IO).launch {
         val current = ActiveTimer(
-          isBattle = false,
           _timerInfo = timerInfo.copy(
             remainedTime = timerUiState.time,
             state = when (timerUiState) {

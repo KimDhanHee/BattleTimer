@@ -49,7 +49,7 @@ import pony.tothemoon.battletimer.viewmodel.TimerListViewModel
 @Composable
 fun TimerListScreen(
   isCancel: Boolean = false,
-  onClickTimer: (TimerInfo) -> Unit = {},
+  onClickSingle: (TimerInfo) -> Unit = {},
   onClickBattle: (TimerInfo) -> Unit = {},
   timerListViewModel: TimerListViewModel = viewModel(),
 ) {
@@ -70,8 +70,8 @@ fun TimerListScreen(
     TimerList(
       otherUserTimer = timerListViewModel.otherUserTimer,
       timerArray = timerList,
-      onClickSingle = onClickTimer,
-      onClickBattle = onClickBattle,
+      onClickSingle = { onClickSingle(it.copy(type = TimerInfo.Type.SINGLE)) },
+      onClickBattle = { onClickBattle(it.copy(type = TimerInfo.Type.BATTLE)) },
     )
   }
 }
