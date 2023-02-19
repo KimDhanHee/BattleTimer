@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlinx-serialization'
     id 'kotlin-parcelize'
+    id 'org.jetbrains.kotlin.kapt'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
@@ -78,6 +79,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle)
     implementation(libs.lifecycle.service)
+
+    implementation(libs.androidx.room.core)
+    annotationProcessor(libs.androidx.room.compiler)
+    kapt(libs.androidx.room.compiler)
 
     implementation(libs.kotlinx.serialization)
 

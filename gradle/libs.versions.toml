@@ -5,6 +5,7 @@ kotlinx-coroutine = "1.6.4"
 androidGradle = "7.3.1"
 androidx-core = "1.9.0"
 androidx-lifecycle = "2.5.1"
+androidx-room = "2.5.0"
 google-services = "4.3.15"
 firebase-crashlytics = "2.9.2"
 
@@ -23,6 +24,7 @@ exoplayer = "1.0.0-beta03"
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
@@ -30,6 +32,8 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-room-core = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room"}
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "androidx-lifecycle" }
 
 compose-material3 = { module = "androidx.compose.material3:material3" }
