@@ -34,7 +34,9 @@
   <string name="battle_timer_encourage_12">Small drops of water penetrate the rock!</string>
   <string name="battle_timer_exit_encourage">You\'ll do better next time.\nSee you again ☺️</string>
   <string name="battle_timer_good_job">Good job! 🎉</string>
-  <string name="battle_timer_other_left">%s has left</string>
+  <string name="battle_timer_other_concentrating_screen_on">%s is focusing\non the screen on mode 🟢</string>
+  <string name="battle_timer_other_concentrating_screen_off">%s is focusing\non the screem off mode 🌙</string>
+  <string name="battle_timer_other_left">%s has left 🔴</string>
   <string name="battle_timer_win" translatable="false">YOU WIN! 🏆</string>
   <string name="battle_timer_lose" translatable="false">YOU LOSE 😞</string>
   <string name="battle_timer_feedback_title">Please give us your opinion so that the battle timer can develop further</string>
