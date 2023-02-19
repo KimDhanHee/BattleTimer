@@ -85,6 +85,8 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
   private var timer: CountDownTimer? = null
   private fun startBattle() {
+    val concentrateOnScreenTime =
+      (timerInfo.time - 1 * TimerInfo.MINUTE_UNIT until timerUiState.time - 30 * TimerInfo.SECONDS_UNIT).random()
     val winningTime = (10 * TimerInfo.SECONDS_UNIT until 50 * TimerInfo.SECONDS_UNIT).random()
     val timeTick = 100L
     val encourageTextResArray = arrayOf(
@@ -114,8 +116,13 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
         timerUiState = BattleTimerUiState.Running(
           time = remainedTime,
-          hasWin = hasWin,
-          textRes = encourageTextRes
+          battleTextRes = when {
+            remainedTime in (concentrateOnScreenTime..timerInfo.time) -> R.string.battle_timer_other_concentrating_screen_on
+            remainedTime in (winningTime..concentrateOnScreenTime) -> R.string.battle_timer_other_concentrating_screen_off
+            remainedTime < winningTime -> R.string.battle_timer_other_left
+            else -> 0
+          },
+          encourageTextRes = encourageTextRes
         )
 
         if (!hasWin) {
@@ -179,8 +186,8 @@ sealed class BattleTimerUiState {
   data class Ready(override val time: Long, val countdown: Int) : BattleTimerUiState()
   data class Running(
     override val time: Long,
-    val hasWin: Boolean = false,
-    @StringRes val textRes: Int,
+    @StringRes val battleTextRes: Int,
+    @StringRes val encourageTextRes: Int,
   ) : BattleTimerUiState()
 
   data class Finish(override val time: Long) : BattleTimerUiState()
@@ -192,6 +199,13 @@ sealed class BattleTimerUiState {
 
   val isRunning: Boolean
     get() = this is Loading || this is Ready || this is Running
+
+  val battleLabelRes
+    get() = when (this) {
+      is Running -> this.battleTextRes
+      is Finish -> R.string.battle_timer_other_left
+      else -> 0
+    }
 }
 
 class BattleTimerViewModelFactory(
