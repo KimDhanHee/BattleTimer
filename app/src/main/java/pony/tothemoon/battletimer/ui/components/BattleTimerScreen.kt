@@ -250,7 +250,7 @@ private fun Body(
         else -> timerUiState.time.timeStr
       },
       label = when (timerUiState) {
-        is BattleTimerUiState.Running -> stringResource(id = timerUiState.textRes)
+        is BattleTimerUiState.Running -> stringResource(id = timerUiState.encourageTextRes)
         is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_good_job)
         else -> ""
       },
@@ -260,8 +260,6 @@ private fun Body(
     )
 
     if (timerUiState.displayBattle) {
-      val displayWin =
-        timerUiState is BattleTimerUiState.Running && timerUiState.hasWin || timerUiState is BattleTimerUiState.Finish
       ProgressIndicator(
         progress = battleTimer.remainedTime / battleTimer.time.toFloat(),
         progressText = when (timerUiState) {
@@ -269,9 +267,8 @@ private fun Body(
           else -> battleTimer.remainedTime.timeStr
         },
         label = when {
-          displayWin -> stringResource(id = R.string.battle_timer_other_left, battleTimer.title)
-          timerUiState is BattleTimerUiState.Running ->
-            stringResource(id = R.string.timer_list_battle_timer_title, battleTimer.title)
+          timerUiState.battleLabelRes != 0 ->
+            stringResource(id = timerUiState.battleLabelRes, battleTimer.title)
           else -> ""
         },
         modifier = Modifier
