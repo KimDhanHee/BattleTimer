@@ -6,11 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
+import pony.tothemoon.battletimer.model.TimerDatabase
+import pony.tothemoon.battletimer.model.TimerHistory
 import pony.tothemoon.battletimer.model.TimerInfo
 
 class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
@@ -40,6 +44,10 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
 
       override fun onFinish() {
         timerUiState = SingleTimerUiState.Finish(0)
+
+        viewModelScope.launch {
+          saveHistory()
+        }
       }
     }.start()
   }
@@ -51,12 +59,19 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     timerUiState = SingleTimerUiState.Pause(timerUiState.time)
   }
 
+  fun cancel() {
+    viewModelScope.launch {
+      saveHistory()
+      dismiss()
+    }
+  }
+
   fun dismiss() {
     timerUiState = SingleTimerUiState.Idle(timerInfo.time)
     clear()
   }
 
-  fun save() {
+  fun saveTimerState() {
     if (timerUiState.isActive) {
       CoroutineScope(Dispatchers.IO).launch {
         val current = ActiveTimer(
@@ -71,6 +86,18 @@ class SingleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
         )
         TimerDataStore.save(current)
       }
+    }
+  }
+
+  private suspend fun saveHistory() {
+    withContext(Dispatchers.IO) {
+      TimerDatabase.timerDao.save(
+        TimerHistory(
+          time = timerInfo.time - timerUiState.time,
+          isWin = timerUiState is SingleTimerUiState.Finish,
+          type = timerInfo.type
+        )
+      )
     }
   }
 

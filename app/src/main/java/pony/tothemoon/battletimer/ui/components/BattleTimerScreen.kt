@@ -73,7 +73,7 @@ fun BattleTimerScreen(
   keepScreenOn()
 
   onLifecycleEvent { event ->
-    if (event == Lifecycle.Event.ON_PAUSE) viewmodel.save()
+    if (event == Lifecycle.Event.ON_PAUSE) viewmodel.saveTimerState()
   }
 
   Box(modifier = Modifier.fillMaxSize()) {
@@ -91,7 +91,6 @@ fun BattleTimerScreen(
         showFeedbackDialog = false
 
         coroutineScope.launch { UserDataStore.displayFeedbackDialog() }
-        resetCanceled(navController)
         navController.navigateUp()
       }
       ConfirmDialog(
@@ -121,11 +120,13 @@ fun BattleTimerScreen(
 
           AlarmUtils.cancelAlarm(context, timerInfo.id)
           NotificationUtils.removeNotification(context, timerInfo.id)
-          EventLogger.log(PonyEvent.CANCEL_TIMER, bundleOf(
-            "type" to "battle",
-            "time" to timerInfo.time,
-            "duration" to timerInfo.time - timerUiState.time
-          ))
+          EventLogger.log(
+            PonyEvent.CANCEL_TIMER, bundleOf(
+              "type" to "battle",
+              "time" to timerInfo.time,
+              "duration" to timerInfo.time - timerUiState.time
+            )
+          )
 
           showExitScreen = true
         },
@@ -136,18 +137,12 @@ fun BattleTimerScreen(
     val needToDisplayFeedback by UserDataStore.displayFeedbackFlow.collectAsState(initial = false)
     val onBack = {
       when (timerUiState) {
-        is BattleTimerUiState.Idle -> {
-          cancelTimer(navController)
-          navController.navigateUp()
-        }
+        is BattleTimerUiState.Idle -> navController.navigateUp()
         is BattleTimerUiState.Finish -> {
           NotificationUtils.removeNotification(context, timerInfo.id)
           when {
             needToDisplayFeedback -> showFeedbackDialog = true
-            else -> {
-              resetCanceled(navController)
-              navController.navigateUp()
-            }
+            else -> navController.navigateUp()
           }
         }
         else -> showExitDialog = true
@@ -180,16 +175,19 @@ fun BattleTimerScreen(
             context,
             timerInfo.copy(remainedTime = timerInfo.time + 9 * TimerInfo.SECONDS_UNIT)
           )
-          NotificationUtils.notify(context,
+          NotificationUtils.notify(
+            context,
             timerInfo.id,
             timerInfo.title,
             AndroidUtils.string(R.string.timer_noti_start_sub_title)
           )
 
-          EventLogger.log(PonyEvent.START_TIMER, bundleOf(
-            "type" to "battle",
-            "time" to timerInfo.time
-          ))
+          EventLogger.log(
+            PonyEvent.START_TIMER, bundleOf(
+              "type" to "battle",
+              "time" to timerInfo.time
+            )
+          )
         },
         onCancel = { onBack() },
         onFinish = {
@@ -216,23 +214,10 @@ fun BattleTimerScreen(
         showExitScreen = false
 
         viewmodel.cancel()
-        cancelTimer(navController)
         navController.navigateUp()
       })
     }
   }
-}
-
-private fun cancelTimer(navController: NavHostController) {
-  navController.previousBackStackEntry
-    ?.savedStateHandle
-    ?.set(TimerDestination.TimerList.KEY_IS_CANCEL, true)
-}
-
-private fun resetCanceled(navController: NavHostController) {
-  navController.previousBackStackEntry
-    ?.savedStateHandle
-    ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)
 }
 
 @Composable

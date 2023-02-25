@@ -81,14 +81,10 @@ class MainActivity : ComponentActivity() {
     NavHost(navController, startDestination = TimerDestination.TimerList.route) {
       composable(
         route = TimerDestination.TimerList.route,
-      ) { navBackStackEntry ->
+      ) {
         window.statusBarColor = Color.WHITE
 
-        val isCancel by navBackStackEntry.savedStateHandle
-          .getStateFlow(TimerDestination.TimerList.KEY_IS_CANCEL, false)
-          .collectAsState()
         TimerListScreen(
-          isCancel = isCancel,
           onClickSingle = { timerInfo ->
             navController.navigateToSingleTop("${TimerDestination.SingleTimer.route}/$timerInfo")
           },
