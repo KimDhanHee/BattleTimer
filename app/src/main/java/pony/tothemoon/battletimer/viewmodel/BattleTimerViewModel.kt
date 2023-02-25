@@ -13,12 +13,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pony.tothemoon.battletimer.R
 import pony.tothemoon.battletimer.datastore.ActiveTimer
 import pony.tothemoon.battletimer.datastore.TimerDataStore
 import pony.tothemoon.battletimer.datastore.UserDataStore
 import pony.tothemoon.battletimer.event.EventLogger
 import pony.tothemoon.battletimer.event.PonyEvent
+import pony.tothemoon.battletimer.model.TimerDatabase
+import pony.tothemoon.battletimer.model.TimerHistory
 import pony.tothemoon.battletimer.model.TimerInfo
 import pony.tothemoon.battletimer.utils.AndroidUtils
 
@@ -139,30 +142,38 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
   private fun finish() {
     timerUiState = BattleTimerUiState.Finish(0)
 
-    viewModelScope.launch { UserDataStore.finishBattle() }
+    viewModelScope.launch {
+      saveHistory()
+      UserDataStore.finishBattle()
+    }
 
     clear()
 
-    EventLogger.log(PonyEvent.FINISH_TIMER, bundleOf(
-      "type" to "battle",
-      "time" to timerInfo.time
-    ))
+    EventLogger.log(
+      PonyEvent.FINISH_TIMER, bundleOf(
+        "type" to "battle",
+        "time" to timerInfo.time
+      )
+    )
   }
 
   fun cancel() {
-    timerUiState = BattleTimerUiState.Idle(timerInfo.time)
+    viewModelScope.launch {
+      saveHistory()
 
-    timer?.cancel()
-    timer = null
+      timerUiState = BattleTimerUiState.Idle(timerInfo.time)
 
-    clear()
+      timer?.cancel()
+      timer = null
+
+      clear()
+    }
   }
 
-  fun save() {
+  fun saveTimerState() {
     if (timerUiState.isRunning) {
       CoroutineScope(Dispatchers.IO).launch {
         val current = ActiveTimer(
-          isBattle = true,
           _timerInfo = timerInfo.copy(
             remainedTime = timerUiState.time,
             state = TimerInfo.State.RUNNING
@@ -170,6 +181,18 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
         )
         TimerDataStore.save(current)
       }
+    }
+  }
+
+  private suspend fun saveHistory() {
+    withContext(Dispatchers.IO) {
+      TimerDatabase.timerDao.save(
+        TimerHistory(
+          time = timerInfo.time - timerUiState.time,
+          isWin = timerUiState is BattleTimerUiState.Finish,
+          type = timerInfo.type
+        )
+      )
     }
   }
 

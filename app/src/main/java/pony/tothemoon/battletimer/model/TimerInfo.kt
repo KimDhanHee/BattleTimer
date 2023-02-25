@@ -16,6 +16,7 @@ data class TimerInfo(
   val time: Long = 0L,
   val remainedTime: Long = time,
   val state: State = State.IDLE,
+  val type: Type = Type.SINGLE,
 ) : Parcelable {
   override fun toString(): String = Uri.encode(Json.encodeToString(this))
 
@@ -30,6 +31,12 @@ data class TimerInfo(
     RUNNING,
     PAUSE,
     FINISH,
+    ;
+  }
+
+  enum class Type {
+    SINGLE,
+    BATTLE,
     ;
   }
 }

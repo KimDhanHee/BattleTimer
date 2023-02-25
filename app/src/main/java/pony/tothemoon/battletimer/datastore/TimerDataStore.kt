@@ -43,12 +43,9 @@ object TimerDataStore {
 
 @Serializable
 data class ActiveTimer(
-  val isBattle: Boolean,
   private val _timerInfo: TimerInfo,
   private val lastRunningTime: Long = System.currentTimeMillis(),
 ) {
-  val isSingle: Boolean = !isBattle
-
   val timerInfo: TimerInfo
     get() {
       val remainedTime =
