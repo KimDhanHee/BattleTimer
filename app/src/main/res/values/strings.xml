@@ -42,6 +42,7 @@
   <string name="battle_timer_other_concentrating_screen_off">%s is focusing\non the screem off mode 🌙</string>
   <string name="battle_timer_other_left">%s has left 🔴</string>
   <string name="battle_timer_win" translatable="false">YOU WIN! 🏆</string>
+  <string name="battle_timer_win_rate">Daily Win Rate : %dW %dL (%d\%%)</string>
   <string name="battle_timer_lose" translatable="false">YOU LOSE 😞</string>
   <string name="battle_timer_feedback_title">Please give us your opinion so that the battle timer can develop further</string>
   <string name="battle_timer_feedback_positive">OK</string>

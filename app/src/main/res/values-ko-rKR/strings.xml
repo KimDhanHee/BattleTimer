@@ -37,6 +37,7 @@
   <string name="battle_timer_other_concentrating_screen_on">%s 님이 화면을 켜고 집중하고 있어요 🟢</string>
   <string name="battle_timer_other_concentrating_screen_off">%s 님이 화면을 끄고 집중하고 있어요 🌙</string>
   <string name="battle_timer_other_left">%s 님이 퇴장 하셨습니다 🔴</string>
+  <string name="battle_timer_win_rate">오늘 승률: %d승 %d패 (%d\%%)</string>
   <string name="battle_timer_exit_encourage">다음에는 더 잘할거에요\n또 만나요 ☺️</string>
   <string name="battle_timer_feedback_title">배틀 타이머가 더 발전할 수 있게 의견을 부탁드려요</string>
   <string name="battle_timer_feedback_positive">좋아요</string>
