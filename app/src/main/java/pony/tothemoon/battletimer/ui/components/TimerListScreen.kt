@@ -104,7 +104,7 @@ private fun ConcentrateTime(timeStr: String, modifier: Modifier = Modifier) {
 private fun WinCount(winCount: Int, modifier: Modifier = Modifier) {
   Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
     Text(
-      text = stringResource(id = R.string.timer_list_today_concentrate_time),
+      text = stringResource(id = R.string.timer_list_today_win_count),
       style = MaterialTheme.typography.titleMedium
     )
     Spacer(modifier = Modifier.size(8.dp))

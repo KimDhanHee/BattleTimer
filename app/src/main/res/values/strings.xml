@@ -8,11 +8,10 @@
   <string name="minute_15_timer">🍅 15 minute timer</string>
   <string name="minute_25_timer">🍅 25 minute timer</string>
   <string name="minute_50_timer">🎯 50 minute timer</string>
-  <string name="timer_list_battle_timer_title">%s is concentrating 🔥</string>
-  <string name="timer_list_encourage_text" translatable="false">실패한 자가 패배하는 것이 아니라\n포기한 자가 패배하는 것이다</string>
-  <string name="timer_list_today_concentrate_time" translatable="false">오늘 집중 시간</string>
-  <string name="timer_list_today_win_count" translatable="false">오늘 승리 횟수</string>
-  <string name="timer_list_today_win_count_format" translatable="false">%d승</string>
+  <string name="timer_list_encourage_text">Those who fall are not defeated,\nBut those who give up are defeated</string>
+  <string name="timer_list_today_concentrate_time">Daily Focus Time</string>
+  <string name="timer_list_today_win_count">Daily Wins</string>
+  <string name="timer_list_today_win_count_format">%d Wins</string>
   <string name="battle_timer_bottom_description">Let\'s start off lightly</string>
   <string name="battle_timer_button_start">Start battle</string>
   <string name="battle_timer_button_giveup">Giving up</string>
