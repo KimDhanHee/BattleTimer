@@ -47,6 +47,17 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
       TimerInfo.State.FINISH -> finish()
       else -> Unit
     }
+
+    viewModelScope.launch {
+      TimerDatabase.timerDao.getWinCountOfDate().collect {
+        this@BattleTimerViewModel.winCount = it
+      }
+    }
+    viewModelScope.launch {
+      TimerDatabase.timerDao.getLoseCountOfDate().collect {
+        this@BattleTimerViewModel.loseCount = it
+      }
+    }
   }
 
   fun start() {
@@ -139,8 +150,15 @@ class BattleTimerViewModel(private val timerInfo: TimerInfo) : ViewModel() {
     }.start()
   }
 
+  private var winCount: Int = 0
+  private var loseCount: Int = 0
+
   private fun finish() {
-    timerUiState = BattleTimerUiState.Finish(0)
+    timerUiState = BattleTimerUiState.Finish(
+      time = 0,
+      winCount = winCount + 1,
+      loseCount = loseCount
+    )
 
     viewModelScope.launch {
       saveHistory()
@@ -213,7 +231,11 @@ sealed class BattleTimerUiState {
     @StringRes val encourageTextRes: Int,
   ) : BattleTimerUiState()
 
-  data class Finish(override val time: Long) : BattleTimerUiState()
+  data class Finish(override val time: Long, val winCount: Int, val loseCount: Int) :
+    BattleTimerUiState() {
+    val winRate: Int
+      get() = (winCount.toFloat() / (winCount + loseCount) * 100).toInt()
+  }
 
   abstract val time: Long
 

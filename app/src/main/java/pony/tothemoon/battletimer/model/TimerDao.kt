@@ -22,6 +22,12 @@ abstract class TimerDao {
     type: TimerInfo.Type = TimerInfo.Type.BATTLE,
   ): Flow<Int>
 
+  @Query("SELECT COUNT(*) FROM timer_history WHERE date = :date AND isWin = 0 AND type = :type")
+  abstract fun getLoseCountOfDate(
+    date: LocalDate = Clock.System.now().today(),
+    type: TimerInfo.Type = TimerInfo.Type.BATTLE,
+  ): Flow<Int>
+
   @Query("SELECT SUM(time) FROM timer_history WHERE date = :date")
   abstract fun getTimeOfDate(date: LocalDate = Clock.System.now().today()): Flow<Long>
 

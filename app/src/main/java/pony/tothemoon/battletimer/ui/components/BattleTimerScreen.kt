@@ -239,6 +239,15 @@ private fun Body(
         is BattleTimerUiState.Finish -> stringResource(id = R.string.battle_timer_good_job)
         else -> ""
       },
+      subLabel = when (timerUiState) {
+        is BattleTimerUiState.Finish -> stringResource(
+          id = R.string.battle_timer_win_rate,
+          timerUiState.winCount,
+          timerUiState.loseCount,
+          timerUiState.winRate
+        )
+        else -> ""
+      },
       modifier = Modifier
         .weight(1f)
         .padding(20.dp)
@@ -348,6 +357,7 @@ private fun ProgressIndicator(
   progress: Float,
   progressText: String,
   label: String = "",
+  subLabel: String = "",
   modifier: Modifier = Modifier,
   textColor: Color = Color.White,
   timerColor: Color = Color.White,
@@ -386,6 +396,15 @@ private fun ProgressIndicator(
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.labelMedium,
     )
+    if (subLabel.isNotEmpty()) {
+      Spacer(modifier = Modifier.size(8.dp))
+      Text(
+        text = subLabel,
+        color = textColor,
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.labelMedium,
+      )
+    }
   }
 }
 
