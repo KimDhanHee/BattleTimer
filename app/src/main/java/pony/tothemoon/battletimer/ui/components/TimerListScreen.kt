@@ -26,17 +26,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pony.tothemoon.battletimer.R
@@ -48,64 +46,90 @@ import pony.tothemoon.battletimer.viewmodel.TimerListViewModel
 
 @Composable
 fun TimerListScreen(
-  isCancel: Boolean = false,
-  onClickTimer: (TimerInfo) -> Unit = {},
+  onClickSingle: (TimerInfo) -> Unit = {},
   onClickBattle: (TimerInfo) -> Unit = {},
   timerListViewModel: TimerListViewModel = viewModel(),
 ) {
-  LaunchedEffect(isCancel) {
-    if (!isCancel) {
-      timerListViewModel.refreshOtherUserTimer()
-    }
-  }
-
   Column(
     modifier = Modifier
       .fillMaxSize()
       .padding(start = 20.dp, end = 20.dp)
   ) {
-    Title(modifier = Modifier.padding(top = 24.dp, bottom = 30.dp))
+    val todayConcentrateTime by timerListViewModel.todayConcentrateTimeFlow.collectAsState()
+    val todayWinCount by timerListViewModel.todayWinCountFlow.collectAsState()
+
+    Header(todayConcentrateTime, todayWinCount)
 
     val timerList = timerListViewModel.presetTimers
     TimerList(
-      otherUserTimer = timerListViewModel.otherUserTimer,
       timerArray = timerList,
-      onClickSingle = onClickTimer,
-      onClickBattle = onClickBattle,
+      onClickSingle = { onClickSingle(it.copy(type = TimerInfo.Type.SINGLE)) },
+      onClickBattle = { onClickBattle(it.copy(type = TimerInfo.Type.BATTLE)) },
     )
   }
 }
 
 @Composable
-private fun Title(modifier: Modifier = Modifier) {
-  Text(
-    text = stringResource(id = R.string.app_name),
-    modifier = modifier,
-    style = MaterialTheme.typography.titleLarge
-  )
+private fun Header(concentrateTimeStr: String, winCount: Int) {
+  Column(
+    modifier = Modifier.padding(vertical = 24.dp),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Text(
+      text = stringResource(id = R.string.timer_list_encourage_text),
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.labelLarge
+    )
+    Spacer(modifier = Modifier.size(16.dp))
+    Row {
+      ConcentrateTime(timeStr = concentrateTimeStr, modifier = Modifier.weight(1f))
+      WinCount(winCount = winCount, modifier = Modifier.weight(1f))
+    }
+  }
+}
+
+@Composable
+private fun ConcentrateTime(timeStr: String, modifier: Modifier = Modifier) {
+  Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Text(
+      text = stringResource(id = R.string.timer_list_today_concentrate_time),
+      style = MaterialTheme.typography.titleMedium
+    )
+    Spacer(modifier = Modifier.size(8.dp))
+    Text(text = timeStr, style = MaterialTheme.typography.labelLarge)
+  }
+}
+
+@Composable
+private fun WinCount(winCount: Int, modifier: Modifier = Modifier) {
+  Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Text(
+      text = stringResource(id = R.string.timer_list_today_win_count),
+      style = MaterialTheme.typography.titleMedium
+    )
+    Spacer(modifier = Modifier.size(8.dp))
+    Text(
+      text = stringResource(id = R.string.timer_list_today_win_count_format, winCount),
+      style = MaterialTheme.typography.labelLarge
+    )
+  }
 }
 
 @Composable
 private fun TimerList(
-  otherUserTimer: TimerInfo,
   modifier: Modifier = Modifier,
   timerArray: Array<TimerInfo> = emptyArray(),
   onClickSingle: (TimerInfo) -> Unit = {},
   onClickBattle: (TimerInfo) -> Unit = {},
 ) {
-  var showOtherUserTimer by rememberSaveable { mutableStateOf(true) }
-
   LazyColumn(
     modifier = modifier,
     verticalArrangement = Arrangement.spacedBy(8.dp),
     contentPadding = PaddingValues(bottom = 20.dp)
   ) {
-    if (showOtherUserTimer) {
-      item {
-        OtherUserTimer(otherUserTimer, onClickClose = { showOtherUserTimer = false })
-      }
-    }
+    item {
 
+    }
     items(timerArray) { timerInfo ->
       Row {
         TimerListItem(

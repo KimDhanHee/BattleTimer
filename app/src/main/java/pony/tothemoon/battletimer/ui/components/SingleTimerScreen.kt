@@ -65,7 +65,7 @@ fun SingleTimerScreen(
   val context = LocalContext.current
 
   onLifecycleEvent { event ->
-    if (event == Lifecycle.Event.ON_PAUSE) viewmodel.save()
+    if (event == Lifecycle.Event.ON_PAUSE) viewmodel.saveTimerState()
   }
 
   val timerUiState = viewmodel.timerUiState
@@ -81,17 +81,19 @@ fun SingleTimerScreen(
 
         AlarmUtils.cancelAlarm(context, timerInfo.id)
 
-        viewmodel.dismiss()
-
-        cancelTimer(navController)
+        viewmodel.cancel()
 
         NotificationUtils.removeNotification(context, timerInfo.id)
 
-        EventLogger.log(PonyEvent.CANCEL_TIMER, bundleOf(
-          "type" to "single",
-          "time" to timerInfo.time,
-          "duration" to timerInfo.time - timerUiState.time
-        ))
+        EventLogger.log(
+          PonyEvent.CANCEL_TIMER, bundleOf(
+            "type" to "single",
+            "time" to timerInfo.time,
+            "duration" to timerInfo.time - timerUiState.time
+          )
+        )
+
+        navController.navigateUp()
       },
       onClickCancel = {
         showDialog = false
@@ -101,18 +103,21 @@ fun SingleTimerScreen(
 
   LaunchedEffect(timerUiState) {
     if (timerUiState is SingleTimerUiState.Finish) {
-      EventLogger.log(PonyEvent.FINISH_TIMER, bundleOf(
-        "type" to "single",
-        "time" to timerInfo.time
-      ))
+      EventLogger.log(
+        PonyEvent.FINISH_TIMER, bundleOf(
+          "type" to "single",
+          "time" to timerInfo.time
+        )
+      )
     }
   }
 
   val onBack = {
     when {
       timerUiState.isActive -> showDialog = true
-      timerUiState is SingleTimerUiState.Idle -> cancelTimer(navController)
-      timerUiState is SingleTimerUiState.Finish -> resetCanceled(navController)
+      timerUiState is SingleTimerUiState.Idle -> navController.navigateUp()
+      timerUiState is SingleTimerUiState.Finish -> navController.navigateUp()
+      else -> Unit
     }
   }
 
@@ -140,10 +145,12 @@ fun SingleTimerScreen(
           AndroidUtils.string(R.string.timer_noti_start_sub_title)
         )
 
-        EventLogger.log(PonyEvent.START_TIMER, bundleOf(
-          "type" to "single",
-          "time" to timerInfo.time
-        ))
+        EventLogger.log(
+          PonyEvent.START_TIMER, bundleOf(
+            "type" to "single",
+            "time" to timerInfo.time
+          )
+        )
       },
       onClickPause = {
         viewmodel.pause()
@@ -160,20 +167,6 @@ fun SingleTimerScreen(
   if (timerUiState.isActive) {
     Advertise()
   }
-}
-
-private fun cancelTimer(navController: NavHostController) {
-  navController.previousBackStackEntry
-    ?.savedStateHandle
-    ?.set(TimerDestination.TimerList.KEY_IS_CANCEL, true)
-  navController.navigateUp()
-}
-
-private fun resetCanceled(navController: NavHostController) {
-  navController.previousBackStackEntry
-    ?.savedStateHandle
-    ?.remove<Boolean>(TimerDestination.TimerList.KEY_IS_CANCEL)
-  navController.navigateUp()
 }
 
 @Composable

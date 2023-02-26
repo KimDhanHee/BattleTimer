@@ -4,27 +4,20 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import pony.tothemoon.battletimer.datastore.TimerDataStore
@@ -68,11 +61,12 @@ class MainActivity : ComponentActivity() {
           val needToNavigate =
             navController.currentDestination?.route == TimerDestination.TimerList.route
           if (needToNavigate) {
-            when {
-              activeTimer?.isBattle == true ->
+            when (activeTimer?.timerInfo?.type) {
+              TimerInfo.Type.BATTLE ->
                 navController.navigateToSingleTop("${TimerDestination.BattleTimer.route}/${activeTimer!!.timerInfo}")
-              activeTimer?.isSingle == true ->
+              TimerInfo.Type.SINGLE ->
                 navController.navigateToSingleTop("${TimerDestination.SingleTimer.route}/${activeTimer!!.timerInfo}")
+              else -> Unit
             }
           }
         }
@@ -87,15 +81,11 @@ class MainActivity : ComponentActivity() {
     NavHost(navController, startDestination = TimerDestination.TimerList.route) {
       composable(
         route = TimerDestination.TimerList.route,
-      ) { navBackStackEntry ->
+      ) {
         window.statusBarColor = Color.WHITE
 
-        val isCancel by navBackStackEntry.savedStateHandle
-          .getStateFlow(TimerDestination.TimerList.KEY_IS_CANCEL, false)
-          .collectAsState()
         TimerListScreen(
-          isCancel = isCancel,
-          onClickTimer = { timerInfo ->
+          onClickSingle = { timerInfo ->
             navController.navigateToSingleTop("${TimerDestination.SingleTimer.route}/$timerInfo")
           },
           onClickBattle = { timerInfo ->

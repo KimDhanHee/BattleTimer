@@ -3,13 +3,14 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlinx-serialization'
     id 'kotlin-parcelize'
+    id 'org.jetbrains.kotlin.kapt'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
 
 def version_major = 1
 def version_minor = 0
-def version_patch = 1
+def version_patch = 2
 
 def version_code = version_major * 100 + version_minor * 10 + version_patch
 def version_name = "${version_major}.${version_minor}.${version_patch}"
@@ -20,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId "pony.tothemoon.battletimer"
-        minSdk 24
+        minSdk 26
         targetSdk 33
         versionCode version_code
         versionName version_name
@@ -79,7 +80,12 @@ dependencies {
     implementation(libs.androidx.lifecycle)
     implementation(libs.lifecycle.service)
 
+    implementation(libs.androidx.room.core)
+    annotationProcessor(libs.androidx.room.compiler)
+    kapt(libs.androidx.room.compiler)
+
     implementation(libs.kotlinx.serialization)
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.datastore)
 

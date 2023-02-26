@@ -8,7 +8,10 @@
   <string name="minute_15_timer">🍅 15 minute timer</string>
   <string name="minute_25_timer">🍅 25 minute timer</string>
   <string name="minute_50_timer">🎯 50 minute timer</string>
-  <string name="timer_list_battle_timer_title">%s is concentrating 🔥</string>
+  <string name="timer_list_encourage_text">Those who fall are not defeated,\nBut those who give up are defeated</string>
+  <string name="timer_list_today_concentrate_time">Daily Focus Time</string>
+  <string name="timer_list_today_win_count">Daily Wins</string>
+  <string name="timer_list_today_win_count_format">%d Wins</string>
   <string name="battle_timer_bottom_description">Let\'s start off lightly</string>
   <string name="battle_timer_button_start">Start battle</string>
   <string name="battle_timer_button_giveup">Giving up</string>
@@ -34,8 +37,11 @@
   <string name="battle_timer_encourage_12">Small drops of water penetrate the rock!</string>
   <string name="battle_timer_exit_encourage">You\'ll do better next time.\nSee you again ☺️</string>
   <string name="battle_timer_good_job">Good job! 🎉</string>
-  <string name="battle_timer_other_left">%s has left</string>
+  <string name="battle_timer_other_concentrating_screen_on">%s is focusing\non the screen on mode 🟢</string>
+  <string name="battle_timer_other_concentrating_screen_off">%s is focusing\non the screem off mode 🌙</string>
+  <string name="battle_timer_other_left">%s has left 🔴</string>
   <string name="battle_timer_win" translatable="false">YOU WIN! 🏆</string>
+  <string name="battle_timer_win_rate">Daily Win Rate : %dW %dL (%d\%%)</string>
   <string name="battle_timer_lose" translatable="false">YOU LOSE 😞</string>
   <string name="battle_timer_feedback_title">Please give us your opinion so that the battle timer can develop further</string>
   <string name="battle_timer_feedback_positive">OK</string>
