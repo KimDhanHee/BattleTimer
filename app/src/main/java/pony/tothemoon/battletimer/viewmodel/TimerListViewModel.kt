@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import pony.tothemoon.battletimer.R
@@ -14,7 +15,7 @@ import pony.tothemoon.battletimer.utils.AndroidUtils
 
 class TimerListViewModel : ViewModel() {
   val todayConcentrateTimeFlow: StateFlow<String> =
-    TimerDatabase.timerDao.getTimeOfDate().map { it.timeStr }.stateIn(
+    TimerDatabase.timerDao.getTimeOfDate().map { it.timeStr }.catch { }.stateIn(
       scope = viewModelScope,
       started = SharingStarted.WhileSubscribed(),
       initialValue = 0L.timeStr
